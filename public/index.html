@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🦙 smOllama</title>
+  <!-- Author: Steven Moyard - smOllama -->
+  <style>
+:root {
+  --primary-bg: #1E1E1E;
+  --secondary-bg: #2D2D2D;
+  --accent-color: #0D8BF0;
+  --text-color: #FFF;
+  --secondary-text: #B0B0B0;
+  --border-radius: 1.2rem;
+  --transition: all 0.3s ease;
+  --scroll-color: #424242;
+  --btn-bg: rgba(255, 255, 255, 0.1);
+  --btn-hover: rgba(255, 255, 255, 0.2);
+  --bord: 1px solid var(--btn-bg);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--primary-bg);
+  color: var(--text-color);
+  line-height: 1.6;
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: var(--secondary-bg);
+  border-bottom: var(--bord);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.app-controls {
+  display: flex;
+  gap: 0.8rem;
+  align-items: center;
+}
+
+.btn, .model-selector, .query-button {
+  background-color: var(--btn-bg);
+  color: var(--text-color);
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.model-selector {
+  padding: 0.5rem 1rem;
+  min-width: 200px;
+}
+
+.model-selector option {
+  background-color: #333;
+  color: white;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+  height: calc(100vh - 70px);
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: var(--scroll-color) var(--primary-bg);
+}
+
+/* Webkit (Chrome, Edge, Safari) */
+.container::-webkit-scrollbar { width: 8px; }
+
+.container::-webkit-scrollbar-track {
+  background: var(--primary-bg); /* Background color */
+  border-radius: 10px;
+}
+
+.container::-webkit-scrollbar-thumb {
+  background: var(--scroll-color); /* Bar color */
+  border-radius: 10px;
+}
+
+.container::-webkit-scrollbar-thumb:hover { background: #333; }
+
+.chat-container {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+}
+
+.messages {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.message {
+  display: flex;
+  max-width: 85%;
+  list-style: none;
+}
+
+.message.user { align-self: flex-end; }
+
+.message.assistant { align-self: flex-start; }
+
+.message-content {
+  padding: 1rem;
+  border-radius: var(--border-radius);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.user .message-content {
+  background-color: var(--accent-color);
+  border-radius: 1.2rem 1.2rem 0 1.2rem;
+}
+
+.system .message-content,
+.assistant .message-content {
+  background-color: var(--secondary-bg);
+  border-radius: 1.2rem 1.2rem 1.2rem 0;
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  font-size: 1.2rem;
+  border-radius: 50%;
+  margin-right: 0.8rem;
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+}
+
+.user .avatar {
+  background-color: #2196F3;
+  margin-right: 0;
+  margin-left: 0.8rem;
+  order: 1;
+}
+
+.system .avatar, .assistant .avatar { background-color: #37474F; }
+
+.chat-input-container {
+  position: relative;
+  background-color: var(--secondary-bg);
+  border-radius: var(--border-radius);
+  margin-bottom: 1rem;
+}
+
+.chat-input {
+  width: 100%;
+  padding: 1rem 3.5rem 1rem 1rem;
+  background-color: transparent;
+  border: none;
+  color: var(--text-color);
+  font-size: 1rem;
+  resize: none;
+  border-radius: var(--border-radius);
+  min-height: 60px;
+}
+
+.chat-input:focus { outline: none; }
+
+.send-button {
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  background-color: var(--accent-color);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition);
+  font-size: 1.5rem;
+  line-height: 1;
+  padding: 0;
+}
+
+.btn:hover, .model-selector:hover, .query-button:hover { background-color: var(--btn-hover); }
+
+.btn {
+  padding: 0.7rem 1.5rem;
+  font-size: 1rem;
+}
+
+.btn-primary {
+  background-color: var(--accent-color);
+  color: white;
+}
+
+.send-button:hover, .btn-primary:hover { background-color: #0A6BC0; }
+
+.sample-queries {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  justify-content: center;
+}
+
+.query-button {
+  color: var(--secondary-text);
+  padding: 0.8rem 1.2rem;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 200px;
+}
+
+.query-button:hover { color: var(--text-color); }
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: var(--transition);
+}
+
+.modal.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-content {
+  background-color: var(--secondary-bg);
+  border-radius: var(--border-radius);
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header, .modal-footer {
+  display: flex;
+  padding: 1rem;
+}
+
+.modal-header {
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: var(--bord);
+}
+
+.modal-footer {
+  border-top: var(--bord);
+  justify-content: flex-end;
+  gap: 0.8rem;
+}
+
+.modal-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.close-modal {
+  background: none;
+  border: none;
+  color: var(--text-color);
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.modal-body { padding: 1.5rem; }
+
+.form-group { margin-bottom: 1.5rem; }
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.8rem;
+  background-color: rgba(0, 0, 0, 0.2);
+  border: var(--bord);
+  border-radius: 0.5rem;
+  color: var(--text-color);
+  font-size: 1rem;
+  resize: vertical;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--accent-color);
+}
+
+code, pre code {
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+  font-family: 'Consolas', 'Monaco', monospace;
+}
+
+code {
+  padding: 0.2rem 0.4rem;
+  font-size: 0.9em;
+}
+
+pre code {
+  display: block;
+  padding: 1rem;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  margin: 0.5rem 0;
+}
+
+li {
+  margin-left: 20px;
+  list-style-type: disc;
+}
+
+.thinking-content {
+  color: #777;
+  font-size: 0.85em;
+  border-left: 2px solid #777;
+  padding-left: 10px;
+  margin: 10px 0;
+  cursor: pointer;
+  display: inline-block;
+  transition: all 0.3s ease;
+}
+
+.hidden {
+  display: none;
+}
+
+.thinking-tag {
+  background: #494949;/*rgba(73, 73, 73, 1.0);*/
+  border-radius: 10px;
+  justify-content: center;
+  align-items: center;
+  width: fit-content;
+  padding: 4px 10px;
+  display: flex;
+  cursor: pointer;
+}
+
+.boxed {
+  display: inline-block;
+  border: 2px solid #0077B7;
+  border-radius: 10px;
+  padding: 2px 6px;
+  /*margin: 0 2px;*/
+  /*font-style: normal;*/
+}
+
+.typing-indicator {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+}
+
+.typing-dot {
+  width: 8px;
+  height: 8px;
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
+  margin: 0 3px;
+  animation: typing-dot 1.4s infinite ease-in-out;
+}
+
+.typing-dot:nth-child(1) { animation-delay: 0s; }
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes typing-dot {
+  0%, 60%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-6px); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .header { padding: 0.8rem 1rem; }
+  .header h1 { font-size: 1.2rem; }
+  .model-selector { min-width: 120px; }
+  .container { padding: 0.5rem; }
+  .message { max-width: 95%; }
+  .modal-content { width: 95%; }
+}
+  </style>
+</head>
+<body>
+  <header class="header">
+    <h1 id="title" title="new chat">🦙 smOllama</h1>
+    <div class="app-controls">
+      <select id="model-selector" class="model-selector">
+        <option value="">Loading models...</option>
+      </select>
+      <button id="settings-button" class="btn btn-secondary">⚙️</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="chat-container" id="chat-container">
+      <ul class="messages" id="messages"></ul>
+    </div>
+
+    <div class="chat-input-container">
+      <textarea id="user-input" class="chat-input" placeholder="Ask your question here..." rows="2"></textarea>
+      <button id="send-button" class="send-button">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      </button>
+    </div>
+
+    <div id="sample-queries" class="sample-queries">
+      <button class="query-button">What is your main function?</button>
+      <button class="query-button">Tell me a futuristic micro-story in three sentences.</button>
+      <button class="query-button">How does a neural network work?</button>
+      <button class="query-button">Write a short poem about technology</button>
+    </div>
+  </div>
+
+  <div id="settings-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">⚙️ Settings</h3>
+        <button class="close-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="system-prompt">System Message (instructions prompt)</label>
+          <textarea id="system-prompt" class="form-control" rows="6"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="temperature">Temperature (creativity)</label>
+          <input type="range" id="temperature" class="form-control" min="0" max="1" step="0.1" value="0.7">
+          <div id="temperature-value">0.7</div>
+        </div>
+        <div class="form-group">
+          <label for="context-length">Length of context to keep</label>
+          <input type="number" id="context-length" class="form-control" min="1" max="20" value="10">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="exportConversation()">Export conversation</button>
+        <button id="save-settings" class="btn btn-primary">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+"use strict";
+const ollamaServer = "http://localhost:11434";
+const $ = id => document.getElementById(id);
+
+let state = {
+  conversationHistory: [],
+  selectedModel: "llama2:7b", // Default model
+  systemPrompt: "You are a smart, precise, and trustworthy AI assistant. Provide clear, concise, and relevant responses. Be helpful, honest, and efficient in all your answers.",
+  temperature: 0.7,
+  contextLength: 10,
+  isGenerating: false,
+  currentAssistantMessage: null,
+  accumulatedContent: ""
+};
+
+function init() {
+  loadSettingsFromLocalStorage();
+
+  // Set initial UI elements from state
+  $('system-prompt').value = state.systemPrompt;
+  $('temperature').value = state.temperature;
+  $('temperature-value').textContent = state.temperature;
+  $('context-length').value = state.contextLength;
+
+  // Initialize conversation with system message
+  state.conversationHistory = [{ role: "system", content: state.systemPrompt }];
+
+  fetchModels();
+  setupEvents();
+}
+
+function loadSettingsFromLocalStorage() {
+  const cfg = JSON.parse(localStorage.getItem('smOllama') || '{}');
+  state.systemPrompt = cfg.systemPrompt || state.systemPrompt;
+  state.temperature = cfg.temperature || state.temperature;
+  state.contextLength = cfg.contextLength || state.contextLength;
+  state.selectedModel = cfg.selectedModel || state.selectedModel;
+}
+
+// Save settings to localStorage
+function saveSettingsToLocalStorage() {
+  localStorage.setItem('smOllama', JSON.stringify({
+    systemPrompt: state.systemPrompt,
+    temperature: state.temperature,
+    contextLength: state.contextLength,
+    selectedModel: state.selectedModel
+  }));
+}
+
+async function fetchModels() {
+  try {
+    const response = await fetch(`${ollamaServer}/api/tags`);
+    if (!response.ok) throw new Error(`Unable to retrieve model list`);
+
+    const reader = response.body.getReader();
+    const { value } = await reader.read();
+    const data = JSON.parse(new TextDecoder().decode(value));
+
+    // Clear and populate model selector
+    $('model-selector').innerHTML = '';
+
+    if (data.models?.length) {
+      data.models.forEach(model => {
+        const option = document.createElement('option');
+        option.value = model.name;
+        option.textContent = model.name;
+        $('model-selector').appendChild(option);
+      });
+
+      // Select model or default to first
+      $('model-selector').value = data.models.some(m => m.name === state.selectedModel) ? state.selectedModel : data.models[0].name;
+      
+      if ($('model-selector').value !== state.selectedModel) {
+        state.selectedModel = $('model-selector').value;
+      }
+    }
+  } catch (err) {
+    showError(`Error connecting to Ollama server: ${err.message}`);
+  }
+}
+
+function setupEvents() {
+  // Send message on button click
+  $('send-button').addEventListener('click', sendUserMessage);
+
+  // Send message on Enter key press (no Shift)
+  $('user-input').addEventListener('keydown', (e) => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), sendUserMessage()));
+
+  // Handle model selection
+  $('model-selector').addEventListener('change', e => { state.selectedModel = e.target.value; saveSettingsToLocalStorage(); });
+
+  // Open settings
+  $('settings-button').addEventListener('click', () => $('settings-modal').classList.add('visible'));
+
+  // Close settings
+  document.querySelector('.close-modal').addEventListener('click', () => $('settings-modal').classList.remove('visible'));
+
+  // Close when clicking outside
+  $('settings-modal').addEventListener('click', (e) => e.target === $('settings-modal') && $('settings-modal').classList.remove('visible'));
+
+  // Handle temperature change
+  $('temperature').addEventListener('input', e => $('temperature-value').textContent = e.target.value);
+
+  // Handle sample queries
+  document.querySelectorAll('.query-button').forEach(btn => btn.addEventListener('click', () => { $('user-input').value = btn.textContent; sendUserMessage(); }));
+
+  // Clear chat on title click
+  $('title').addEventListener('click', () => { clearChat(); state.isGenerating = false; buttonsVisible(true); });
+
+  // Save settings
+  $('save-settings').addEventListener('click', () => {
+    state.systemPrompt = $('system-prompt').value;
+    state.temperature = parseFloat($('temperature').value);
+    state.contextLength = parseInt($('context-length').value);
+
+    // Update system message
+    if (state.conversationHistory.length > 0 && state.conversationHistory[0].role === 'system') {
+      state.conversationHistory[0].content = state.systemPrompt;
+    } else {
+      state.conversationHistory.unshift({ role: 'system', content: state.systemPrompt });
+    }
+
+    saveSettingsToLocalStorage();
+    $('settings-modal').classList.remove('visible');
+  });
+}
+
+function sendUserMessage() {
+  const msg = $('user-input').value.trim();
+  if (!msg || state.isGenerating) return;
+
+  $('user-input').value = '';
+  createMessage(msg, 'user');
+  state.conversationHistory.push({ role: 'user', content: msg });
+  generateResponse();
+
+  buttonsVisible(false);
+}
+
+async function generateResponse() {
+  try {
+    state.isGenerating = true;
+    state.accumulatedContent = '';
+    addTypingIndicator();
+
+    // Get trimmed conversation history respecting context window
+    const trimmedHistory = [
+      ...state.conversationHistory.filter(msg => msg.role === 'system'),
+      ...state.conversationHistory.filter(msg => msg.role !== 'system').slice(-state.contextLength * 2)
+    ];
+
+    const response = await fetch(`${ollamaServer}/api/chat`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: state.selectedModel,
+        messages: trimmedHistory,
+        stream: true,
+        options: { temperature: state.temperature }
+      })
+    });
+
+    if (response.ok) {
+      removeTypingIndicator();
+      createMessage('', 'assistant');
+      await processStreamingResponse(response);
+    } else {
+      showError(`API Error: Unable to contact model.`);
+    }
+  } catch (err) {
+    showError(`Connection error: Make sure Ollama is running.\nError: ${err}`);
+  } finally {
+    removeTypingIndicator();
+    state.isGenerating = false;
+  }
+}
+
+async function processStreamingResponse(response) {
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder("utf-8");
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    try {
+      const chunk = decoder.decode(value);
+      const { message } = JSON.parse(chunk);
+      message?.content && updateAssistantMessage(message.content);
+    } catch (err) {
+      showError(`Error parsing JSON from stream: ${err}`);
+    }
+  }
+  //console.log(state.currentAssistantMessage.innerHTML); // for LaTeX and Markdown debug
+  state.conversationHistory.push({
+    role: 'assistant',
+    content: state.accumulatedContent
+  });
+}
+
+function createMessage(txt, role) {
+  const msg = document.createElement('li');
+  msg.className = `message ${role}`;
+
+  const avatar = document.createElement('div');
+  avatar.className = 'avatar';
+  avatar.textContent = role === 'user' ? '👤' : role === 'assistant' ? '🦙' : '⚠️';
+  
+  const content = document.createElement('div');
+  content.className = 'message-content';
+  if (txt) content.innerHTML = toHtml(txt);
+
+  msg.appendChild(avatar);
+  msg.appendChild(content);
+  $('messages').appendChild(msg);
+
+  if (role === 'assistant') state.currentAssistantMessage = msg.lastChild;
+
+  scrollToBottom();
+  return msg;
+}
+
+// Update assistant message with streamed content
+function updateAssistantMessage(content) {
+  state.accumulatedContent += content;
+  if (state.currentAssistantMessage) {
+    state.currentAssistantMessage.innerHTML = toHtml(state.accumulatedContent);
+  }
+  scrollToBottom();
+}
+
+function addTypingIndicator() {
+  const typingMsg = createMessage('', 'assistant');
+  typingMsg.classList.add('typing-message');
+  typingMsg.id = 'typing-indicator';
+
+  const dots = document.createElement('div');
+  dots.className = 'typing-indicator';
+
+  for (let i = 0; i < 3; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'typing-dot';
+    dots.appendChild(dot);
+  }
+
+  typingMsg.querySelector('.message-content').appendChild(dots);
+}
+
+const removeTypingIndicator = () => $('typing-indicator')?.remove();
+
+const showError = message => createMessage(message, 'system');
+
+function showReasoning(element) {
+  var content = element.nextElementSibling;
+
+  if (content && content.classList.contains('thinking-content')) {
+    content.classList.toggle('hidden');
+  }
+}
+
+function toHtml(content) {
+  content = LaTeXToHtml(content);
+  content = MarkdownToHtml(content);
+  return content;
+}
+
+function LaTeXToHtml(content) {
+  return content
+  .replace(/\\textsuperscript\{([^}]+)\}/g, '<sup>$1</sup>')
+  .replace(/\\textsubscript\{([^}]+)\}/g, '<sub>$1</sub>')
+  .replace(/\\alpha/g, '&alpha;')
+  .replace(/\\beta/g, '&beta;')
+  .replace(/\\gamma/g, '&gamma;')
+  .replace(/x\^2/g, 'x²')
+  .replace(/\\leq/g, '&le;')
+  .replace(/\\geq/g, '&ge;')
+  .replace(/\\neq/g, '&ne;')
+  .replace(/\\equiv/g, '&equiv;')
+  .replace(/\\pi/g, '&pi;')
+  .replace(/\\infty/g, '&infin;')
+  .replace(/\\nabla/g, '&nabla;')
+  .replace(/\\int/g, '&#8747;')
+  .replace(/\\sum/g, '&#8721;')
+  .replace(/\\prod/g, '&#8719;')
+  .replace(/\\lim/g, '&#x2192;')
+  .replace(/\\frac\{([^}]+)\}\{([^}]+)\}/g, '<span class="LaTeX-fraction"><sup>$1</sup>&frasl;<sub>$2</sub></span>')
+  .replace(/\\sqrt\{([^}]+)\}/g, '<span class="LaTeX-sqrt">&#8730;$1</span>')
+  .replace(/\\text\{([^}]+)\}/g, '<span class="LaTeX-text">$1</span>')
+  .replace(/(?:\\)?boxed\{(.*?)\}/g, (match, content) => `<span class="boxed">${content.replace(/\\\(|\\\)/g, '').replace(/\s+/g, ' ').trim()}</span>`)
+  .replace(/\\left\(/g, '(')
+  .replace(/\\right\)/g, ')')
+  .replace(/\\begin\{bmatrix\}([\s\S]*?)\\end\{bmatrix\}/g, '<div class="matrix">$1</div>')
+  .replace(/\\begin\{pmatrix\}([\s\S]*?)\\end\{pmatrix\}/g, '<div class="pmatrix">$1</div>')
+  .replace(/\\left\[\s*([^\]]+)\s*\\right\]/g, '[$1]')
+  .replace(/\\left\{\s*([^\}]+)\s*\\right\}/g, '[$1]')
+  .replace(/\\left\(\s*([^\)]+)\s*\\right\)/g, '($1)')
+  .replace(/\\mathbb\{([^}]+)\}/g, '<span class="mathbb">$1</span>')
+  .replace(/\\texttt\{([^}]+)\}/g, '<code>$1</code>')
+  .replace(/\\underline\{([^}]+)\}/g, '<u>$1</u>')
+}
+
+function MarkdownToHtml(content) {
+  const thinking_head = `<span class='thinking-tag' onclick="showReasoning(this);">⚛ reasoning</span><span class='thinking-content'>`;
+  return content
+  .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+  .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+  .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+  .replace(/^#### (.*$)/gim, '<h4>$1</h4>')
+  .replace(/(\*\*|__)([^*]+?)\1/g, '<strong>$2</strong>')
+  .replace(/(\*|_)([^*]+?)\1/g, '<em>$2</em>')
+  .replace(/\*([^*]+)\*|_([^_]+)_/g, '<em>$1$2</em>')
+  .replace(/~~([^~]+)~~/g, '<del>$1</del>')
+  .replace(/\[([^\]]+)\]\(([^\)]+)\)/g, '<a href="$2">$1</a>')
+  .replace(/`([^`\n]+)`/g, '<code>$1</code>')
+  .replace(/\*/g, '&times;')
+  .replace(/\n\n/g, '<br>').replace(/\n/g, '<br>')
+  .replace(/^\s*-\s(.*)$/gm, '<li>$1</li>')
+  .replace(/^<li>.*<\/li>$/gm, (match) => `<ul>${match}</ul>`)
+  .replace(/\\times/g, '&times;').replace(/\+-/g, '±').replace(/\^\circ/g, '°')
+  .replace(/-->/g, '→').replace(/<--/g, '←')
+  .replace(/```(\w+)?\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>')
+  .replace(/\\\[(.*?)\\\]/g, '$1').replace(/\\\((.*?)\\\)/g, '$1').replace(/\$\$(.*?)\$\$/g, '$1')
+  .replace(/<think><br>/g, thinking_head)
+  .replace(thinking_head+"<br>", thinking_head)
+  .replace(/<\/think>/g, `</span>`)
+  .replace(/<span class='thinking-content'>([\s\S]*?)<\/span>/g, `<span class='thinking-content hidden'>$1</span>`);
+}
+
+function exportConversation() {
+  const conversationText = state.conversationHistory
+    .filter(msg => msg.role !== 'system')
+    .map(msg => `${msg.role === 'user' ? '👤 User' : '🦙 Assistant'}: ${msg.content}`)
+    .join('\n\n');
+
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([conversationText], { type: 'text/plain' }));
+  a.download = `ollama-chat-${new Date().toISOString().split('T')[0]}.txt`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+const buttonsVisible = (show) => $('sample-queries').style.display = show ? '' : 'none';
+
+function clearChat() {
+  state.conversationHistory = state.conversationHistory.filter(msg => msg.role === 'system');
+  $('messages').innerHTML = '';
+}
+
+const scrollToBottom = () => $('chat-container').scrollTop = $('chat-container').scrollHeight;
+init();
+  </script>
+</body>
+</html>

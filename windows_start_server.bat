@@ -1,0 +1,3 @@
+@echo off
+echo Starting smOllama server on port 80...
+npx live-server --port=80 public
