@@ -2,6 +2,8 @@
 
 A lightweight web browser chatbot interface for Ollama models.
 
+![web demonstration](screenshot.png)
+
 ## Overview
 
 smOllama is a lightweight chatbot interface designed specifically for Ollama language models. Built with plain HTML, CSS, and JavaScript, it offers a clean, efficient way to interact with your local Ollama models without the bloat of larger alternatives.
