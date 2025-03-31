@@ -87,7 +87,9 @@ This project is available under a very permissive license. You are free to use, 
 - Please keep the original author's name in the comments.  
 
 No formal LICENSE file is required—just respect this minimal courtesy.
+
 If needed, you can fork and apply your own license.
+
 If you find this tool useful, you might consider [buying me a coffee](https://buymeacoffee.com/gunnm) to support my work.
 
 ## Acknowledgments
