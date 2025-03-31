@@ -3,442 +3,40 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🦙 smOllama</title>
-  <!-- Author: Steven Moyard - smOllama -->
-  <style>
-:root {
-  --primary-bg: #1E1E1E;
-  --secondary-bg: #2D2D2D;
-  --accent-color: #0D8BF0;
-  --text-color: #FFF;
-  --secondary-text: #B0B0B0;
-  --border-radius: 1.2rem;
-  --transition: all 0.3s ease;
-  --scroll-color: #424242;
-  --btn-bg: rgba(255, 255, 255, 0.1);
-  --btn-hover: rgba(255, 255, 255, 0.2);
-  --bord: 1px solid var(--btn-bg);
-}
-
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: var(--primary-bg);
-  color: var(--text-color);
-  line-height: 1.6;
-  overflow: hidden;
-}
-
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 2rem;
-  background-color: var(--secondary-bg);
-  border-bottom: var(--bord);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-.header h1 {
-  font-size: 1.5rem;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  cursor: pointer;
-}
-
-.app-controls {
-  display: flex;
-  gap: 0.8rem;
-  align-items: center;
-}
-
-.btn, .model-selector, .query-button {
-  background-color: var(--btn-bg);
-  color: var(--text-color);
-  border: none;
-  border-radius: var(--border-radius);
-  cursor: pointer;
-  transition: var(--transition);
-}
-
-.model-selector {
-  padding: 0.5rem 1rem;
-  min-width: 200px;
-}
-
-.model-selector option {
-  background-color: #333;
-  color: white;
-}
-
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 1rem;
-  height: calc(100vh - 70px);
-  display: flex;
-  flex-direction: column;
-  overflow: auto;
-  /* Firefox */
-  scrollbar-width: thin;
-  scrollbar-color: var(--scroll-color) var(--primary-bg);
-}
-
-/* Webkit (Chrome, Edge, Safari) */
-.container::-webkit-scrollbar { width: 8px; }
-
-.container::-webkit-scrollbar-track {
-  background: var(--primary-bg); /* Background color */
-  border-radius: 10px;
-}
-
-.container::-webkit-scrollbar-thumb {
-  background: var(--scroll-color); /* Bar color */
-  border-radius: 10px;
-}
-
-.container::-webkit-scrollbar-thumb:hover { background: #333; }
-
-.chat-container {
-  flex: 1;
-  overflow-y: auto;
-  margin-bottom: 1.5rem;
-  padding: 1rem;
-}
-
-.messages {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.message {
-  display: flex;
-  max-width: 85%;
-  list-style: none;
-}
-
-.message.user { align-self: flex-end; }
-
-.message.assistant { align-self: flex-start; }
-
-.message-content {
-  padding: 1rem;
-  border-radius: var(--border-radius);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.user .message-content {
-  background-color: var(--accent-color);
-  border-radius: 1.2rem 1.2rem 0 1.2rem;
-}
-
-.system .message-content,
-.assistant .message-content {
-  background-color: var(--secondary-bg);
-  border-radius: 1.2rem 1.2rem 1.2rem 0;
-}
-
-.avatar {
-  width: 48px;
-  height: 48px;
-  font-size: 1.2rem;
-  border-radius: 50%;
-  margin-right: 0.8rem;
-  display: flex;
-  flex-shrink: 0;
-  align-items: center;
-  justify-content: center;
-}
-
-.user .avatar {
-  background-color: #2196F3;
-  margin-right: 0;
-  margin-left: 0.8rem;
-  order: 1;
-}
-
-.system .avatar, .assistant .avatar { background-color: #37474F; }
-
-.chat-input-container {
-  position: relative;
-  background-color: var(--secondary-bg);
-  border-radius: var(--border-radius);
-  margin-bottom: 1rem;
-}
-
-.chat-input {
-  width: 100%;
-  padding: 1rem 3.5rem 1rem 1rem;
-  background-color: transparent;
-  border: none;
-  color: var(--text-color);
-  font-size: 1rem;
-  resize: none;
-  border-radius: var(--border-radius);
-  min-height: 60px;
-}
-
-.chat-input:focus { outline: none; }
-
-.send-button {
-  position: absolute;
-  right: 1rem;
-  bottom: 1rem;
-  background-color: var(--accent-color);
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: var(--transition);
-  font-size: 1.5rem;
-  line-height: 1;
-  padding: 0;
-}
-
-.btn:hover, .model-selector:hover, .query-button:hover { background-color: var(--btn-hover); }
-
-.btn {
-  padding: 0.7rem 1.5rem;
-  font-size: 1rem;
-}
-
-.btn-primary {
-  background-color: var(--accent-color);
-  color: white;
-}
-
-.send-button:hover, .btn-primary:hover { background-color: #0A6BC0; }
-
-.sample-queries {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 1rem;
-  justify-content: center;
-}
-
-.query-button {
-  color: var(--secondary-text);
-  padding: 0.8rem 1.2rem;
-  font-size: 0.9rem;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  max-width: 200px;
-}
-
-.query-button:hover { color: var(--text-color); }
-
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  opacity: 0;
-  visibility: hidden;
-  transition: var(--transition);
-}
-
-.modal.visible {
-  opacity: 1;
-  visibility: visible;
-}
-
-.modal-content {
-  background-color: var(--secondary-bg);
-  border-radius: var(--border-radius);
-  width: 90%;
-  max-width: 600px;
-  max-height: 80vh;
-  overflow-y: auto;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-}
-
-.modal-header, .modal-footer {
-  display: flex;
-  padding: 1rem;
-}
-
-.modal-header {
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: var(--bord);
-}
-
-.modal-footer {
-  border-top: var(--bord);
-  justify-content: flex-end;
-  gap: 0.8rem;
-}
-
-.modal-title {
-  font-size: 1.2rem;
-  font-weight: 600;
-}
-
-.close-modal {
-  background: none;
-  border: none;
-  color: var(--text-color);
-  font-size: 1.5rem;
-  cursor: pointer;
-}
-
-.modal-body { padding: 1.5rem; }
-
-.form-group { margin-bottom: 1.5rem; }
-
-.form-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 500;
-}
-
-.form-control {
-  width: 100%;
-  padding: 0.8rem;
-  background-color: rgba(0, 0, 0, 0.2);
-  border: var(--bord);
-  border-radius: 0.5rem;
-  color: var(--text-color);
-  font-size: 1rem;
-  resize: vertical;
-}
-
-.form-control:focus {
-  outline: none;
-  border-color: var(--accent-color);
-}
-
-code, pre code {
-  background-color: rgba(0, 0, 0, 0.3);
-  border-radius: 4px;
-  font-family: 'Consolas', 'Monaco', monospace;
-}
-
-code {
-  padding: 0.2rem 0.4rem;
-  font-size: 0.9em;
-}
-
-pre code {
-  display: block;
-  padding: 1rem;
-  overflow-x: auto;
-  white-space: pre-wrap;
-  margin: 0.5rem 0;
-}
-
-li {
-  margin-left: 20px;
-  list-style-type: disc;
-}
-
-.thinking-content {
-  color: #777;
-  font-size: 0.85em;
-  border-left: 2px solid #777;
-  padding-left: 10px;
-  margin: 10px 0;
-  cursor: pointer;
-  display: inline-block;
-  transition: all 0.3s ease;
-}
-
-.hidden {
-  display: none;
-}
-
-.thinking-tag {
-  background: #494949;/*rgba(73, 73, 73, 1.0);*/
-  border-radius: 10px;
-  justify-content: center;
-  align-items: center;
-  width: fit-content;
-  padding: 4px 10px;
-  display: flex;
-  cursor: pointer;
-}
-
-.boxed {
-  display: inline-block;
-  border: 2px solid #0077B7;
-  border-radius: 10px;
-  padding: 2px 6px;
-  /*margin: 0 2px;*/
-  /*font-style: normal;*/
-}
-
-.typing-indicator {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.5rem 1rem;
-}
-
-.typing-dot {
-  width: 8px;
-  height: 8px;
-  background-color: rgba(255, 255, 255, 0.7);
-  border-radius: 50%;
-  margin: 0 3px;
-  animation: typing-dot 1.4s infinite ease-in-out;
-}
-
-.typing-dot:nth-child(1) { animation-delay: 0s; }
-.typing-dot:nth-child(2) { animation-delay: 0.2s; }
-.typing-dot:nth-child(3) { animation-delay: 0.4s; }
-
-@keyframes typing-dot {
-  0%, 60%, 100% { transform: translateY(0); }
-  30% { transform: translateY(-6px); }
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .header { padding: 0.8rem 1rem; }
-  .header h1 { font-size: 1.2rem; }
-  .model-selector { min-width: 120px; }
-  .container { padding: 0.5rem; }
-  .message { max-width: 95%; }
-  .modal-content { width: 95%; }
-}
-  </style>
+  <title>smOllama</title>
+  <!-- Author: Steven Moyard - https://github.com/GUNNM-VR/smOllama -->
+  <link rel="icon" type="image/png" sizes="16x16" href="icon-16x16.png" />
+  <link href="prism/prism.css" rel="stylesheet" />
+  <link href="katex/katex.min.css" rel="stylesheet" />
+  <link href="smollama.css" rel="stylesheet" />
 </head>
 <body>
-  <header class="header">
-    <h1 id="title" title="new chat">🦙 smOllama</h1>
-    <div class="app-controls">
-      <select id="model-selector" class="model-selector">
-        <option value="">Loading models...</option>
-      </select>
-      <button id="settings-button" class="btn btn-secondary">⚙️</button>
-    </div>
-  </header>
+  <script src="prism/prism.js"></script>
+  <script src="katex/katex.min.js"></script>
 
-  <div class="container">
+  <header class="header">
+  <div class="header-left">
+    <button id="hamburger-button" class="hamburger-button">☰</button>
+    <button class="btn" id="clear-chat">💬 New chat</button>
+  </div>
+  <div class="header-right">
+    <select id="model-selector" class="model-selector">
+      <option value="">Loading models...</option>
+    </select>
+    <button id="settings-button" class="btn btn-secondary">⚙️</button>
+  </div>
+</header>
+
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <button class="close-sidebar" id="close-sidebar">&times;</button>
+    </div>
+    <ul class="sidebar-content" id="sidebar-content"> </ul>
+  </div>
+
+  <div class="page_container">
     <div class="chat-container" id="chat-container">
-      <ul class="messages" id="messages"></ul>
+      <div class="messages" id="messages"></div>
     </div>
 
     <div class="chat-input-container">
@@ -449,6 +47,7 @@ li {
           <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
         </svg>
       </button>
+      <button id="stop-button" class="stop-button">■</button>
     </div>
 
     <div id="sample-queries" class="sample-queries">
@@ -459,13 +58,17 @@ li {
     </div>
   </div>
 
-  <div id="settings-modal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 class="modal-title">⚙️ Settings</h3>
-        <button class="close-modal">&times;</button>
+  <div id="settings_container" class="settings">
+    <div class="settings_content">
+      <div class="settings_header">
+        <h3 class="settings_title">⚙️ Settings</h3>
+        <button class="close_settings">&times;</button>
       </div>
-      <div class="modal-body">
+      <div class="settings_body">
+        <div class="form-group">
+          <label for="ollama_server">Ollama server</label>
+          <input type="url" name="ollama-server" id="ollama-server" class="form-control" placeholder="http://localhost:11434" pattern="https?://.*" required />
+        </div>
         <div class="form-group">
           <label for="system-prompt">System Message (instructions prompt)</label>
           <textarea id="system-prompt" class="form-control" rows="6"></textarea>
@@ -479,8 +82,16 @@ li {
           <label for="context-length">Length of context to keep</label>
           <input type="number" id="context-length" class="form-control" min="1" max="20" value="10">
         </div>
+
+        <div class="form-group">
+          <label>Custom Settings</label>
+          <div id="custom-params-container"> </div>
+          <br>
+          <button id="add-param-button" class="btn btn-secondary mt-2">+ Add a parameter</button>
+        </div>
+
       </div>
-      <div class="modal-footer">
+      <div class="settings_footer">
         <button class="btn btn-secondary" onclick="exportConversation()">Export conversation</button>
         <button id="save-settings" class="btn btn-primary">Save</button>
       </div>
@@ -489,84 +100,163 @@ li {
 
   <script>
 "use strict";
-const ollamaServer = "http://localhost:11434";
 const $ = id => document.getElementById(id);
+const createElem = tag => document.createElement(tag);
 
-let state = {
-  conversationHistory: [],
+let settings = {
+  ollamaServer: "http://localhost:11434",
   selectedModel: "llama2:7b", // Default model
   systemPrompt: "You are a smart, precise, and trustworthy AI assistant. Provide clear, concise, and relevant responses. Be helpful, honest, and efficient in all your answers.",
   temperature: 0.7,
   contextLength: 10,
+  customParams: {}
+}
+
+let state = {
+  currentDiscussionId: null,
   isGenerating: false,
-  currentAssistantMessage: null,
-  accumulatedContent: ""
+  currentAssistantMsgId: null,
+  abortController: null,
 };
 
+let msgHistory = {};
+const user_input = document.querySelector('.chat-input-container')
+const chatContainer = $('chat-container');
+let autoScroll = true;
+
 function init() {
-  loadSettingsFromLocalStorage();
+  loadSettings();
 
   // Set initial UI elements from state
-  $('system-prompt').value = state.systemPrompt;
-  $('temperature').value = state.temperature;
-  $('temperature-value').textContent = state.temperature;
-  $('context-length').value = state.contextLength;
+  $('ollama-server').value = settings.ollamaServer;
+  $('system-prompt').value = settings.systemPrompt;
+  $('temperature').value = settings.temperature;
+  $('temperature-value').textContent = settings.temperature;
+  $('context-length').value = settings.contextLength;
 
   // Initialize conversation with system message
-  state.conversationHistory = [{ role: "system", content: state.systemPrompt }];
+  msgHistory[0] = { role: "system", content: settings.systemPrompt };
 
   fetchModels();
   setupEvents();
+  $('user-input').focus();
 }
 
-function loadSettingsFromLocalStorage() {
+// Load settings to localStorage
+function loadSettings() {
   const cfg = JSON.parse(localStorage.getItem('smOllama') || '{}');
-  state.systemPrompt = cfg.systemPrompt || state.systemPrompt;
-  state.temperature = cfg.temperature || state.temperature;
-  state.contextLength = cfg.contextLength || state.contextLength;
-  state.selectedModel = cfg.selectedModel || state.selectedModel;
+  settings.ollamaServer = cfg.ollamaServer || settings.ollamaServer;
+  settings.systemPrompt = cfg.systemPrompt || settings.systemPrompt;
+  settings.temperature = cfg.temperature || settings.temperature;
+  settings.contextLength = cfg.contextLength || settings.contextLength;
+  settings.selectedModel = cfg.selectedModel || settings.selectedModel;
+  settings.customParams = Array.isArray(cfg.customParams)
+    ? Object.fromEntries(cfg.customParams.map(({ name, value }) => [name, value]))
+    : cfg.customParams || {};
+  renderCustomParams();
 }
 
 // Save settings to localStorage
-function saveSettingsToLocalStorage() {
+function saveSettings() {
   localStorage.setItem('smOllama', JSON.stringify({
-    systemPrompt: state.systemPrompt,
-    temperature: state.temperature,
-    contextLength: state.contextLength,
-    selectedModel: state.selectedModel
+    ollamaServer: settings.ollamaServer,
+    systemPrompt: settings.systemPrompt,
+    temperature: settings.temperature,
+    contextLength: settings.contextLength,
+    selectedModel: settings.selectedModel,
+    customParams: settings.customParams
   }));
 }
 
+// Fetch available models from Ollama
 async function fetchModels() {
   try {
-    const response = await fetch(`${ollamaServer}/api/tags`);
-    if (!response.ok) throw new Error(`Unable to retrieve model list`);
+    const response = await fetch(`${settings.ollamaServer}/api/tags`);
+    if (!response.ok) throw new Error("Unable to retrieve model list");
 
-    const reader = response.body.getReader();
-    const { value } = await reader.read();
-    const data = JSON.parse(new TextDecoder().decode(value));
+    const { models } = await response.json();
 
-    // Clear and populate model selector
-    $('model-selector').innerHTML = '';
+    if (!models?.length) return;
 
-    if (data.models?.length) {
-      data.models.forEach(model => {
-        const option = document.createElement('option');
-        option.value = model.name;
-        option.textContent = model.name;
-        $('model-selector').appendChild(option);
-      });
+    // Populate model selector
+    const selector = $('model-selector');
+    selector.innerHTML = '';
 
-      // Select model or default to first
-      $('model-selector').value = data.models.some(m => m.name === state.selectedModel) ? state.selectedModel : data.models[0].name;
-      
-      if ($('model-selector').value !== state.selectedModel) {
-        state.selectedModel = $('model-selector').value;
-      }
+    models.forEach(model => {
+      const option = createElem('option');
+      option.value = model.name;
+      option.textContent = model.name;
+      selector.appendChild(option);
+    });
+
+    // Select model or default to first
+    selector.value = models.some(m => m.name === settings.selectedModel)
+      ? settings.selectedModel
+      : models[0].name;
+
+    if (selector.value !== settings.selectedModel) {
+      settings.selectedModel = selector.value;
     }
   } catch (err) {
     showError(`Error connecting to Ollama server: ${err.message}`);
   }
+}
+
+// Render custom parameters interface
+function renderCustomParams() {
+  const container = $('custom-params-container');
+  container.innerHTML = '';
+  Object.entries(settings.customParams).forEach(([key, value]) => {
+    container.appendChild(createCustomParamRow(key, value));
+  });
+}
+
+function createCustomParamRow(key = '', value = '') {
+  const row = createElem('div');
+  row.className = 'custom-param-row d-flex mb-2';
+
+  // Name input
+  const keyInput = createElem('input');
+  keyInput.type = 'text';
+  keyInput.className = 'form-control mr-2';
+  keyInput.placeholder = 'Parameter name';
+  keyInput.value = key;
+  keyInput.style.marginRight = '10px';
+
+  // Value input
+  const valueInput = createElem('input');
+  valueInput.type = 'text';
+  valueInput.className = 'form-control mr-2';
+  valueInput.placeholder = 'Value';
+  valueInput.value = value;
+  valueInput.style.marginRight = '10px';
+
+  const removeBtn = createElem('button');
+  removeBtn.className = 'btn btn-secondary';
+  removeBtn.textContent = '×';
+  removeBtn.onclick = () => {
+      row.remove();
+      key && delete settings.customParams[key];
+  };
+
+  row.append(keyInput, valueInput, removeBtn);
+  return row;
+}
+
+const addCustomParam = () => $('custom-params-container').appendChild(createCustomParamRow());
+
+function collectCustomParams() {
+  const params = {};
+
+  document.querySelectorAll('.custom-param-row').forEach(row => {
+    const inputs = row.querySelectorAll('input');
+    const key = inputs[0].value.trim();
+    const value = inputs[1].value.trim();
+
+    if (key && value) params[key] = !isNaN(value) ? Number(value) : value;
+  });
+
+  return params;
 }
 
 function setupEvents() {
@@ -574,79 +264,149 @@ function setupEvents() {
   $('send-button').addEventListener('click', sendUserMessage);
 
   // Send message on Enter key press (no Shift)
-  $('user-input').addEventListener('keydown', (e) => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), sendUserMessage()));
+  $('user-input').addEventListener('keydown', e => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), sendUserMessage()));
 
-  // Handle model selection
-  $('model-selector').addEventListener('change', e => { state.selectedModel = e.target.value; saveSettingsToLocalStorage(); });
+  // Auto-resize textarea
+  $('user-input').addEventListener("input", autoResizeTextarea);
+
+  // Stop generation
+  $('stop-button').addEventListener('click', stopGeneration);
+
+  // Clear chat
+  $('clear-chat').addEventListener('click', () => { clearChat(); state.isGenerating = false; buttonsVisible(true); });
+
+  // Stop autoscroll
+  chatContainer.addEventListener('scroll', () => { autoScroll = chatContainer.scrollHeight - chatContainer.scrollTop <= chatContainer.clientHeight + 10; });
+
+  // Sidebar events
+  const sidebar = $("sidebar");
+  $("hamburger-button").addEventListener("click", function() { sidebar.classList.add("open"); });
+
+  // Open sidebar when cursor reaches the left edge  
+  document.addEventListener("mousemove", e => e.clientX < 20 && sidebar.classList.add("open"));
+
+  $("close-sidebar").addEventListener("click", function() { sidebar.classList.remove("open"); });
+
+  // Close sidebar when clicking outside
+  document.addEventListener("click", function(e) {
+    if (sidebar.classList.contains("open") && !sidebar.contains(e.target) && !$("hamburger-button").contains(e.target)) {
+      sidebar.classList.remove("open");
+    }
+  });
+
+  // Model selection
+  $('model-selector').addEventListener('change', e => { settings.selectedModel = e.target.value; saveSettings(); });
 
   // Open settings
-  $('settings-button').addEventListener('click', () => $('settings-modal').classList.add('visible'));
+  $('settings-button').addEventListener('click', () => $('settings_container').classList.add('visible'));
 
   // Close settings
-  document.querySelector('.close-modal').addEventListener('click', () => $('settings-modal').classList.remove('visible'));
+  document.querySelector('.close_settings').addEventListener('click', () => $('settings_container').classList.remove('visible'));
 
   // Close when clicking outside
-  $('settings-modal').addEventListener('click', (e) => e.target === $('settings-modal') && $('settings-modal').classList.remove('visible'));
+  $('settings_container').addEventListener('click', e => e.target === $('settings_container') && $('settings_container').classList.remove('visible'));
 
-  // Handle temperature change
+  // Temperature change
   $('temperature').addEventListener('input', e => $('temperature-value').textContent = e.target.value);
 
-  // Handle sample queries
+  // Sample queries
   document.querySelectorAll('.query-button').forEach(btn => btn.addEventListener('click', () => { $('user-input').value = btn.textContent; sendUserMessage(); }));
 
-  // Clear chat on title click
-  $('title').addEventListener('click', () => { clearChat(); state.isGenerating = false; buttonsVisible(true); });
+  // Add a custom parameter
+  $('add-param-button').addEventListener('click', addCustomParam);
 
   // Save settings
   $('save-settings').addEventListener('click', () => {
-    state.systemPrompt = $('system-prompt').value;
-    state.temperature = parseFloat($('temperature').value);
-    state.contextLength = parseInt($('context-length').value);
+    settings.ollamaServer = $('ollama-server').value;
+    settings.systemPrompt = $('system-prompt').value;
+    settings.temperature = parseFloat($('temperature').value);
+    settings.contextLength = parseInt($('context-length').value);
+    settings.customParams = collectCustomParams();
 
     // Update system message
-    if (state.conversationHistory.length > 0 && state.conversationHistory[0].role === 'system') {
-      state.conversationHistory[0].content = state.systemPrompt;
+    const sys_msg = Object.keys(msgHistory)[0];
+    if (sys_msg && msgHistory[sys_msg]?.role === 'system') {
+      msgHistory[sys_msg].content = settings.systemPrompt;
     } else {
-      state.conversationHistory.unshift({ role: 'system', content: state.systemPrompt });
+      msgHistory[0] = { role: 'system', content: settings.systemPrompt };
     }
 
-    saveSettingsToLocalStorage();
-    $('settings-modal').classList.remove('visible');
+    saveSettings();
+    $('settings_container').classList.remove('visible');
   });
 }
 
+let idCounter = 0;
+const generateMessageId = () => `${new Date().toISOString().replace(/[-:TZ.]/g, '_')}${idCounter++}`;
+
 function sendUserMessage() {
-  const msg = $('user-input').value.trim();
+  const textarea = $('user-input');
+  const msg = textarea.value.trim();
+
   if (!msg || state.isGenerating) return;
 
-  $('user-input').value = '';
-  createMessage(msg, 'user');
-  state.conversationHistory.push({ role: 'user', content: msg });
-  generateResponse();
+  textarea.style.height = "auto";
+  textarea.rows = 2;
+  textarea.value = '';
 
+  createMessage(msg, 'user');
+  generateResponse();
   buttonsVisible(false);
+}
+
+function stopGeneration() {
+  if (!state.abortController) return;
+
+  state.abortController.abort();
+  state.abortController = null;
+
+  user_input.classList.remove('generating');
+  state.isGenerating = false;
+
+  if (!state.currentAssistantMsgId) return;
+  const msg = "[Interrupted Generation]";
+  $(state.currentAssistantMsgId).innerHTML += `<br><em>${msg}</em>`;
+  msgHistory[state.currentAssistantMsgId].content += ` ${msg}`;
+
+  discussionDB.updateDiscussion(state.currentDiscussionId, msgHistory);
 }
 
 async function generateResponse() {
   try {
     state.isGenerating = true;
-    state.accumulatedContent = '';
+    $('user-input').focus();
     addTypingIndicator();
 
-    // Get trimmed conversation history respecting context window
-    const trimmedHistory = [
-      ...state.conversationHistory.filter(msg => msg.role === 'system'),
-      ...state.conversationHistory.filter(msg => msg.role !== 'system').slice(-state.contextLength * 2)
-    ];
+    // Activate Stop button
+    user_input.classList.add('generating');
+    state.abortController = new AbortController();
 
-    const response = await fetch(`${ollamaServer}/api/chat`, {
+    const trimmedHistory = [];
+    let nonSystemMessages = [];
+
+    for (const [_, msg] of Object.entries(msgHistory)) {
+      if (msg.role === 'system') {
+        trimmedHistory.push(msg);
+      } else {
+        nonSystemMessages.push(msg);
+      }
+    }
+    trimmedHistory.push(...nonSystemMessages.slice(-settings.contextLength * 2));
+
+    const options = {
+      temperature: settings.temperature,
+      ...settings.customParams
+    };
+
+    const response = await fetch(`${settings.ollamaServer}/api/chat`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      signal: state.abortController.signal,
       body: JSON.stringify({
-        model: state.selectedModel,
+        model: settings.selectedModel,
         messages: trimmedHistory,
         stream: true,
-        options: { temperature: state.temperature }
+        options: options
       })
     });
 
@@ -658,16 +418,25 @@ async function generateResponse() {
       showError(`API Error: Unable to contact model.`);
     }
   } catch (err) {
-    showError(`Connection error: Make sure Ollama is running.\nError: ${err}`);
+    // Don't show error for voluntary interruption
+    if (err.name !== 'AbortError') {
+      showError(`Connection error: Make sure Ollama is running.\nError: ${err}`);
+    }
   } finally {
     removeTypingIndicator();
     state.isGenerating = false;
+    state.abortController = null;
+    user_input.classList.remove('generating');
   }
 }
 
+// Process streaming response from Ollama
 async function processStreamingResponse(response) {
   const reader = response.body.getReader();
   const decoder = new TextDecoder("utf-8");
+  const msgId = state.currentAssistantMsgId;
+  const msg = msgHistory[msgId];
+  let fullContent = msg.content;
 
   while (true) {
     const { done, value } = await reader.read();
@@ -676,153 +445,652 @@ async function processStreamingResponse(response) {
     try {
       const chunk = decoder.decode(value);
       const { message } = JSON.parse(chunk);
-      message?.content && updateAssistantMessage(message.content);
+
+      if (message?.content) {
+        fullContent += message.content;
+        msg.content = fullContent;
+        $(msgId).innerHTML = toHtml(fullContent);
+        // Update the current discussion
+        if (state.currentDiscussionId) {
+          discussionDB.updateDiscussion(state.currentDiscussionId, msgHistory);
+        }
+
+        addCodeHeaders();
+        scrollToBottom();
+      }
     } catch (err) {
-      showError(`Error parsing JSON from stream: ${err}`);
+      console.log(`Error parsing JSON from stream: ${err} \n ${msg.content}`);
     }
   }
-  //console.log(state.currentAssistantMessage.innerHTML); // for LaTeX and Markdown debug
-  state.conversationHistory.push({
-    role: 'assistant',
-    content: state.accumulatedContent
-  });
 }
 
-function createMessage(txt, role) {
-  const msg = document.createElement('li');
-  msg.className = `message ${role}`;
+function createButton(className, textContent, title, onClick) {
+  const btn = createElem('button');
+  btn.className = className;
+  btn.textContent = textContent;
+  btn.title = title;
+  btn.addEventListener('click', onClick);
+  return btn;
+}
 
-  const avatar = document.createElement('div');
+// Create footer with action buttons for a message
+function createMsgFooter(role, msgId) {
+  const footer = createElem('div');
+  footer.className = 'message-footer';
+  footer.id = `footer_${msgId}`;
+
+  // Copy button
+  const copyBtn = createButton('copy-button', '⧉', 'Copy message', () => copyMsg(msgId));
+
+  // View RAW button
+  const rawBtn = createButton('raw-button', '👁', 'View RAW', () => viewRawMsg(msgId));
+
+  footer.append(copyBtn, rawBtn);
+
+  // Edit button for user messages only
+  if (role === 'user') {
+    const editBtn = createButton('edit-button', '✎', 'Edit message', () => editMsg(msgId));
+    footer.appendChild(editBtn);
+  }
+
+  // Delete button
+  const delBtn = createButton('delete-button', '✖', 'Delete message', () => deleteMsg(msgId));
+  footer.appendChild(delBtn);
+
+  return footer;
+}
+
+function autoResizeTextarea(e) {
+  const txtarea = e.target;
+  txtarea.style.height = "auto";
+  txtarea.style.height = txtarea.scrollHeight + "px";
+}
+
+function editMsg(msgId) {
+  if (!msgId || !msgHistory[msgId]) return;
+
+  const originalText = msgHistory[msgId].content;
+  const messageTimestamp = msgHistory[msgId].timestamp;
+  const msg = $(msgId);
+  const footer = $(`footer_${msgId}`);
+
+  // Create textarea for editing
+  const txtarea = createElem('textarea');
+  txtarea.className = 'chat-input';
+  txtarea.value = originalText;
+  txtarea.style.width = (document.querySelector(".chat-container").offsetWidth * 0.7) + "px";
+
+  msg.innerHTML = '';
+  msg.appendChild(txtarea);
+
+  // Adjust height
+  txtarea.style.height = "auto";
+  txtarea.style.height = txtarea.scrollHeight + "px";
+
+  // Auto-resize
+  txtarea.addEventListener("input", function() {
+    this.style.height = "auto";
+    this.style.height = this.scrollHeight + "px";
+  });
+
+  // Hide footer during edit
+  footer.style.display = 'none';
+
+  // Create action buttons
+  const actionBtns = createElem('div');
+  actionBtns.className = 'edit-action-buttons';
+  actionBtns.style.cssText = "display: flex; gap: 10px; margin-top: 10px;";
+
+  function cancelEdit() {
+    // Restore original content
+    msg.innerHTML = toHtml(originalText);
+    footer.style.display = '';
+    actionBtns.remove();
+  }
+
+  function confirmEdit() {
+    const newText = txtarea.value.trim();
+    if (!newText) return;
+
+    // Update message content
+    msgHistory[msgId].content = newText;
+
+    // Remove messages that came after this one
+    const messagesToRemove = Object.entries(msgHistory)
+      .filter(([id, message]) =>
+        message.role !== 'system' &&
+        id !== msgId &&
+        message.timestamp &&
+        message.timestamp > messageTimestamp
+      )
+      .map(([id]) => id);
+
+    messagesToRemove.forEach(id => deleteMsg(id));
+
+    // Update message
+    msg.innerHTML = toHtml(newText);
+    footer.style.display = '';
+    actionBtns.remove();
+
+    generateResponse();
+  }
+
+  // Add Cancel and Send buttons
+  const cancelBtn = createButton('btn', 'Cancel', 'Cancel editing', cancelEdit);
+  const confirmBtn = createButton('btn btn-primary', 'Send', 'Send edited message', confirmEdit);
+  actionBtns.append(cancelBtn, confirmBtn);
+
+  msg.parentElement.appendChild(actionBtns);
+  txtarea.focus();
+}
+
+function deleteMsg(msgId) {
+  if (!msgId || !msgHistory[msgId]) return;
+  delete msgHistory[msgId];
+  const messageContainer = $(msgId)?.closest('.message');
+  if (messageContainer) messageContainer.remove();
+}
+
+function copyMsg(msgId) {
+  const content = msgHistory[msgId].content;
+  navigator.clipboard.writeText(content);
+
+  const copyBtn = $(`footer_${msgId}`).querySelector('.copy-button');
+  copyBtn.textContent = '✓';
+  setTimeout(() => copyBtn.textContent = '⧉', 1500);
+}
+
+function viewRawMsg(msgId) {
+  const msg = $(msgId);
+  const rawContent = msgHistory[msgId].content;
+  const isCurrentlyRaw = msg.dataset.rawView === 'true';
+
+  if (isCurrentlyRaw) {
+    msg.innerHTML = toHtml(rawContent);
+    addCodeHeaders();
+  } else {
+    msg.innerText = rawContent;
+  }
+
+  msg.dataset.rawView = isCurrentlyRaw ? 'false' : 'true';
+  $(`footer_${msgId}`).querySelector('.raw-button').textContent = isCurrentlyRaw ? '👁' : '🔄';
+}
+
+function createLlamaIcon() {
+  const svgNS = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(svgNS, "svg");
+  svg.setAttribute("width", "21");
+  svg.setAttribute("height", "28");
+  svg.setAttribute("viewBox", "0 0 24.206 32");
+  svg.innerHTML = `
+<path d="M5.269 0.009c-0.299 0.048 -0.657 0.204 -0.91 0.397 -0.765 0.581 -1.358 1.815 -1.608 3.351 -0.094 0.581 -0.159 1.387 -0.159 2.003 0 0.726 0.085 1.654 0.207 2.295 0.028 0.142 0.041 0.269 0.03 0.278 -0.009 0.009 -0.122 0.101 -0.248 0.202 -0.432 0.345 -0.926 0.875 -1.266 1.36 -0.652 0.926 -1.075 1.978 -1.252 3.117 -0.069 0.45 -0.087 1.36 -0.032 1.81 0.122 1.038 0.434 1.916 0.969 2.72l0.175 0.26 -0.051 0.085c-0.358 0.602 -0.664 1.472 -0.806 2.308 -0.113 0.662 -0.126 0.838 -0.126 1.725 0 0.894 0.012 1.07 0.117 1.688 0.126 0.74 0.384 1.523 0.671 2.044 0.094 0.17 0.324 0.524 0.351 0.542 0.009 0.005 -0.018 0.09 -0.062 0.188 -0.331 0.724 -0.613 1.686 -0.73 2.497 -0.083 0.556 -0.094 0.735 -0.094 1.321 0 0.746 0.041 1.109 0.198 1.704l0.023 0.087h1.969l-0.064 -0.122c-0.397 -0.735 -0.434 -2.099 -0.092 -3.462 0.156 -0.629 0.333 -1.091 0.664 -1.727l0.198 -0.386v-0.237c0 -0.221 -0.005 -0.246 -0.076 -0.39 -0.055 -0.11 -0.129 -0.204 -0.26 -0.333 -0.223 -0.216 -0.384 -0.443 -0.512 -0.724 -0.565 -1.227 -0.675 -3.048 -0.278 -4.601 0.165 -0.648 0.439 -1.224 0.726 -1.539 0.195 -0.216 0.296 -0.457 0.296 -0.707 0 -0.26 -0.092 -0.473 -0.299 -0.696 -0.593 -0.634 -0.958 -1.406 -1.089 -2.304 -0.186 -1.279 0.152 -2.674 0.919 -3.779 0.751 -1.084 1.805 -1.78 2.984 -1.966 0.264 -0.044 0.758 -0.037 1.034 0.014 0.301 0.053 0.489 0.037 0.682 -0.055 0.239 -0.113 0.358 -0.253 0.498 -0.574 0.124 -0.287 0.221 -0.443 0.48 -0.767 0.312 -0.388 0.613 -0.652 1.096 -0.972 0.551 -0.361 1.178 -0.622 1.803 -0.749 0.227 -0.046 0.333 -0.053 0.758 -0.053s0.531 0.007 0.758 0.053c0.916 0.186 1.826 0.659 2.552 1.33 0.156 0.145 0.531 0.609 0.65 0.802 0.046 0.076 0.126 0.237 0.177 0.356 0.14 0.322 0.26 0.462 0.498 0.574 0.186 0.09 0.381 0.108 0.671 0.06 0.457 -0.078 0.809 -0.071 1.256 0.021 1.525 0.308 2.853 1.564 3.441 3.248 0.512 1.477 0.368 3.023 -0.395 4.203 -0.129 0.2 -0.257 0.361 -0.443 0.558 -0.402 0.43 -0.402 0.962 -0.002 1.403 0.657 0.719 1.068 2.488 0.944 4.047 -0.083 1.029 -0.347 1.95 -0.71 2.472 -0.064 0.092 -0.198 0.248 -0.299 0.345 -0.131 0.129 -0.204 0.223 -0.26 0.333 -0.071 0.145 -0.076 0.17 -0.076 0.39v0.237l0.198 0.386c0.331 0.636 0.508 1.098 0.664 1.727 0.338 1.344 0.308 2.681 -0.078 3.441 -0.032 0.064 -0.06 0.124 -0.06 0.131s0.439 0.011 0.976 0.011h0.974l0.025 -0.099c0.014 -0.053 0.037 -0.133 0.048 -0.179 0.025 -0.101 0.076 -0.4 0.117 -0.687 0.039 -0.289 0.039 -1.355 0 -1.677 -0.147 -1.167 -0.393 -2.093 -0.795 -2.968 -0.044 -0.099 -0.071 -0.184 -0.062 -0.188 0.012 -0.007 0.076 -0.099 0.145 -0.202 0.501 -0.758 0.809 -1.711 0.965 -2.97 0.041 -0.347 0.041 -1.838 0 -2.171 -0.11 -0.859 -0.243 -1.443 -0.464 -2.033 -0.092 -0.246 -0.335 -0.765 -0.439 -0.933l-0.051 -0.085 0.175 -0.26c0.535 -0.804 0.848 -1.681 0.969 -2.72 0.055 -0.45 0.037 -1.36 -0.032 -1.81 -0.179 -1.142 -0.6 -2.189 -1.252 -3.117 -0.34 -0.485 -0.834 -1.015 -1.266 -1.36 -0.126 -0.101 -0.239 -0.193 -0.248 -0.202 -0.011 -0.009 0.002 -0.136 0.03 -0.278 0.278 -1.449 0.269 -3.257 -0.023 -4.67 -0.253 -1.231 -0.712 -2.21 -1.305 -2.775C19.605 0.161 19.123 -0.032 18.544 0.004c-1.328 0.078 -2.398 1.606 -2.821 4.013 -0.069 0.388 -0.129 0.843 -0.129 0.967 0 0.048 -0.009 0.087 -0.021 0.087s-0.101 -0.046 -0.198 -0.103c-1.024 -0.606 -2.164 -0.93 -3.273 -0.93s-2.249 0.324 -3.273 0.93c-0.096 0.057 -0.186 0.103 -0.198 0.103 -0.011 0 -0.021 -0.039 -0.021 -0.087 0 -0.129 -0.062 -0.597 -0.129 -0.967 -0.384 -2.161 -1.263 -3.592 -2.433 -3.953C5.89 0.016 5.433 -0.016 5.269 0.009m0.391 1.87c0.331 0.262 0.698 1.011 0.91 1.849 0.039 0.152 0.08 0.326 0.092 0.39 0.009 0.062 0.034 0.202 0.055 0.31 0.09 0.487 0.131 1.013 0.136 1.654l0.002 0.632 -0.159 0.234 -0.158 0.237h-0.37c-0.432 0 -0.861 0.055 -1.273 0.165 -0.147 0.037 -0.289 0.074 -0.317 0.08 -0.044 0.009 -0.051 -0.005 -0.076 -0.193 -0.136 -1.022 -0.129 -2.155 0.021 -3.096 0.165 -1.05 0.551 -2.001 0.928 -2.281 0.09 -0.067 0.106 -0.064 0.209 0.018m13.097 -0.016c0.227 0.168 0.478 0.613 0.664 1.183 0.374 1.139 0.48 2.704 0.283 4.192 -0.025 0.188 -0.032 0.202 -0.076 0.193 -0.028 -0.007 -0.17 -0.044 -0.317 -0.08 -0.411 -0.11 -0.841 -0.165 -1.273 -0.165h-0.37l-0.158 -0.237 -0.159 -0.234 0.002 -0.632c0.005 -0.891 0.087 -1.587 0.285 -2.361 0.209 -0.831 0.579 -1.58 0.907 -1.842 0.103 -0.083 0.119 -0.085 0.211 -0.016" fill="black"/>
+<path d="M11.747 13.423c-0.498 0.048 -0.634 0.067 -0.873 0.115 -0.388 0.08 -0.907 0.26 -1.268 0.436 -1.254 0.613 -2.118 1.635 -2.382 2.818 -0.053 0.234 -0.06 0.312 -0.06 0.707 0 0.39 0.007 0.475 0.057 0.698 0.351 1.546 1.776 2.688 3.618 2.897 0.4 0.044 2.127 0.044 2.527 0 1.479 -0.168 2.752 -0.969 3.324 -2.095 0.152 -0.301 0.225 -0.496 0.294 -0.802 0.051 -0.223 0.057 -0.308 0.057 -0.698 0 -0.395 -0.007 -0.473 -0.06 -0.707 -0.384 -1.718 -2.051 -3.071 -4.096 -3.328 -0.266 -0.032 -0.965 -0.06 -1.139 -0.041m0.859 1.25c0.682 0.074 1.369 0.317 1.92 0.685 0.296 0.198 0.714 0.611 0.894 0.882 0.221 0.335 0.347 0.678 0.404 1.093 0.025 0.191 0.012 0.335 -0.057 0.643 -0.108 0.459 -0.443 0.939 -0.896 1.275 -0.211 0.154 -0.65 0.377 -0.919 0.464 -0.51 0.163 -0.843 0.193 -2.033 0.184 -0.776 -0.007 -0.914 -0.014 -1.137 -0.055 -0.76 -0.142 -1.362 -0.446 -1.799 -0.907 -0.354 -0.372 -0.515 -0.712 -0.602 -1.261 -0.039 -0.255 0.034 -0.678 0.184 -1.034 0.181 -0.434 0.65 -0.974 1.114 -1.284 0.537 -0.358 1.245 -0.613 1.895 -0.682 0.25 -0.028 0.781 -0.028 1.031 -0.002" fill="black"/>
+<path d="M11.226 16.35c-0.175 0.094 -0.296 0.333 -0.26 0.51 0.041 0.191 0.209 0.384 0.471 0.542 0.14 0.085 0.149 0.096 0.156 0.181 0.005 0.051 -0.014 0.195 -0.039 0.324 -0.028 0.126 -0.048 0.26 -0.048 0.296 0.002 0.099 0.094 0.26 0.191 0.338 0.085 0.069 0.101 0.071 0.34 0.078 0.218 0.007 0.264 0.002 0.351 -0.039 0.225 -0.11 0.283 -0.312 0.2 -0.701 -0.069 -0.324 -0.055 -0.374 0.117 -0.473 0.181 -0.106 0.374 -0.292 0.432 -0.418 0.11 -0.241 0.009 -0.515 -0.234 -0.641 -0.06 -0.03 -0.133 -0.044 -0.241 -0.044 -0.168 0 -0.276 0.039 -0.473 0.165l-0.113 0.071 -0.071 -0.044c-0.292 -0.172 -0.345 -0.193 -0.521 -0.191 -0.126 0 -0.195 0.011 -0.257 0.044" fill="black"/>
+<path d="M5.648 13.683c-0.407 0.129 -0.71 0.427 -0.866 0.852 -0.076 0.202 -0.113 0.521 -0.08 0.694 0.076 0.411 0.413 0.786 0.797 0.889 0.482 0.126 0.843 0.044 1.162 -0.273 0.186 -0.181 0.287 -0.34 0.388 -0.597 0.073 -0.181 0.078 -0.214 0.078 -0.471l0.002 -0.276 -0.096 -0.198c-0.154 -0.312 -0.432 -0.544 -0.753 -0.629 -0.181 -0.046 -0.473 -0.044 -0.632 0.009" fill="black"/>
+<path d="M17.917 13.676c-0.315 0.085 -0.595 0.319 -0.744 0.627l-0.096 0.198 0.002 0.276c0 0.257 0.005 0.289 0.078 0.471 0.101 0.257 0.202 0.416 0.388 0.597 0.319 0.317 0.68 0.4 1.162 0.273 0.278 -0.074 0.556 -0.308 0.689 -0.581 0.115 -0.232 0.142 -0.4 0.106 -0.664 -0.085 -0.604 -0.439 -1.043 -0.965 -1.197 -0.154 -0.046 -0.452 -0.046 -0.62 0" fill="black"/>
+  `;
+  return svg;
+}
+
+function createMessageBase(role, isTyping = false) {
+  const msg = createElem('div');
+  msg.className = `message ${role}${isTyping ? ' typing-message' : ''}`;
+  if (isTyping) msg.id = 'typing-indicator';
+
+  const avatar = createElem('div');
   avatar.className = 'avatar';
-  avatar.textContent = role === 'user' ? '👤' : role === 'assistant' ? '🦙' : '⚠️';
-  
-  const content = document.createElement('div');
-  content.className = 'message-content';
-  if (txt) content.innerHTML = toHtml(txt);
+
+  if (role === "user") {
+    avatar.textContent = "👤";
+  } else if (role === "assistant") {
+    avatar.appendChild(createLlamaIcon());
+  } else {
+    avatar.textContent = "⚠️";
+  }
+
+  const msgContainer = createElem('div');
+  msgContainer.className = 'msg_container';
+
+  const contentDiv = createElem('div');
+  contentDiv.className = 'message-content';
 
   msg.appendChild(avatar);
-  msg.appendChild(content);
+  msgContainer.appendChild(contentDiv);
+  msg.appendChild(msgContainer);
+
+  msg.contentElement = contentDiv;
+  msg.containerElement = msgContainer;
+
+  return msg;
+}
+
+function createMessageWithID(txt, role, msgId) {
+  msgHistory[msgId] = {
+    role: role,
+    content: txt,
+    id: msgId,
+    timestamp: new Date().toISOString()
+  };
+
+  if (role === 'assistant') state.currentAssistantMsgId = msgId;
+
+  const msg = createMessageBase(role);
+  const contentDiv = msg.contentElement;
+  const msgContainer = msg.containerElement;
+
+  //if (txt) contentDiv.innerHTML = role === 'user' ? toHtml(txt) : txt;
+  contentDiv.innerHTML = toHtml(txt)
+
+  contentDiv.id = msgId;
+
+  const footer = createMsgFooter(role, msgId);
+  msgContainer.appendChild(footer);
+
   $('messages').appendChild(msg);
-
-  if (role === 'assistant') state.currentAssistantMessage = msg.lastChild;
-
   scrollToBottom();
   return msg;
 }
 
-// Update assistant message with streamed content
-function updateAssistantMessage(content) {
-  state.accumulatedContent += content;
-  if (state.currentAssistantMessage) {
-    state.currentAssistantMessage.innerHTML = toHtml(state.accumulatedContent);
-  }
-  scrollToBottom();
+function createMessage(txt, role) {
+  const msgId = generateMessageId();
+  return createMessageWithID(txt, role, msgId);
 }
 
+// Add typing indicator while waiting for response
 function addTypingIndicator() {
-  const typingMsg = createMessage('', 'assistant');
-  typingMsg.classList.add('typing-message');
-  typingMsg.id = 'typing-indicator';
-
-  const dots = document.createElement('div');
+  const msg = createMessageBase('assistant', true);
+  const contentDiv = msg.contentElement;
+  const dots = createElem('div');
   dots.className = 'typing-indicator';
 
   for (let i = 0; i < 3; i++) {
-    const dot = document.createElement('div');
+    const dot = createElem('div');
     dot.className = 'typing-dot';
     dots.appendChild(dot);
   }
 
-  typingMsg.querySelector('.message-content').appendChild(dots);
+  contentDiv.appendChild(dots);
+  $('messages').appendChild(msg);
+  scrollToBottom();
 }
 
 const removeTypingIndicator = () => $('typing-indicator')?.remove();
 
 const showError = message => createMessage(message, 'system');
 
+// Toggle reasoning display
 function showReasoning(element) {
-  var content = element.nextElementSibling;
-
-  if (content && content.classList.contains('thinking-content')) {
+  const content = element.nextElementSibling;
+  if (content?.classList.contains('thinking-content')) {
     content.classList.toggle('hidden');
   }
 }
 
-function toHtml(content) {
-  content = LaTeXToHtml(content);
-  content = MarkdownToHtml(content);
-  return content;
+function escapeHtml(unsafe) {
+  return unsafe
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;")
+    .replace(/`/g, "&#039;")
 }
 
-function LaTeXToHtml(content) {
-  return content
-  .replace(/\\textsuperscript\{([^}]+)\}/g, '<sup>$1</sup>')
-  .replace(/\\textsubscript\{([^}]+)\}/g, '<sub>$1</sub>')
-  .replace(/\\alpha/g, '&alpha;')
-  .replace(/\\beta/g, '&beta;')
-  .replace(/\\gamma/g, '&gamma;')
-  .replace(/x\^2/g, 'x²')
-  .replace(/\\leq/g, '&le;')
-  .replace(/\\geq/g, '&ge;')
-  .replace(/\\neq/g, '&ne;')
-  .replace(/\\equiv/g, '&equiv;')
-  .replace(/\\pi/g, '&pi;')
-  .replace(/\\infty/g, '&infin;')
-  .replace(/\\nabla/g, '&nabla;')
-  .replace(/\\int/g, '&#8747;')
-  .replace(/\\sum/g, '&#8721;')
-  .replace(/\\prod/g, '&#8719;')
-  .replace(/\\lim/g, '&#x2192;')
-  .replace(/\\frac\{([^}]+)\}\{([^}]+)\}/g, '<span class="LaTeX-fraction"><sup>$1</sup>&frasl;<sub>$2</sub></span>')
-  .replace(/\\sqrt\{([^}]+)\}/g, '<span class="LaTeX-sqrt">&#8730;$1</span>')
-  .replace(/\\text\{([^}]+)\}/g, '<span class="LaTeX-text">$1</span>')
-  .replace(/(?:\\)?boxed\{(.*?)\}/g, (match, content) => `<span class="boxed">${content.replace(/\\\(|\\\)/g, '').replace(/\s+/g, ' ').trim()}</span>`)
-  .replace(/\\left\(/g, '(')
-  .replace(/\\right\)/g, ')')
-  .replace(/\\begin\{bmatrix\}([\s\S]*?)\\end\{bmatrix\}/g, '<div class="matrix">$1</div>')
-  .replace(/\\begin\{pmatrix\}([\s\S]*?)\\end\{pmatrix\}/g, '<div class="pmatrix">$1</div>')
-  .replace(/\\left\[\s*([^\]]+)\s*\\right\]/g, '[$1]')
-  .replace(/\\left\{\s*([^\}]+)\s*\\right\}/g, '[$1]')
-  .replace(/\\left\(\s*([^\)]+)\s*\\right\)/g, '($1)')
-  .replace(/\\mathbb\{([^}]+)\}/g, '<span class="mathbb">$1</span>')
-  .replace(/\\texttt\{([^}]+)\}/g, '<code>$1</code>')
-  .replace(/\\underline\{([^}]+)\}/g, '<u>$1</u>')
+function toHtml(src) {
+
+  src = src.replace(/\\\[/g, "");
+  src = src.replace(/\\\]/g, "");
+  src = src.replace(/\\\(/g, "");
+  src = src.replace(/\\\)/g, "");
+
+  const codeRegex = /(`{3,4}[\s\S]*?`{3,4}|`[^`\n]+`)/g;
+  const latexRegex = /\$\$\s*\n?([\s\S]+?)\n?\s*\$\$|\$\s*\n?([^$\n]+?)\n?\s*\$/g;
+  const latexBlockRegex = /\\begin\{([^}]+)\}([\s\S]*?)\\end\{\1\}/g;
+
+  let segments = [];
+  let lastIndex = 0, match;
+
+  while ((match = codeRegex.exec(src)) !== null) {
+    if (match.index > lastIndex) {
+      segments.push({ type: 'text', content: src.slice(lastIndex, match.index) });
+    }
+    segments.push({ type: 'code', content: match[0] });
+    lastIndex = codeRegex.lastIndex;
+  }
+  if (lastIndex < src.length) {
+    segments.push({ type: 'text', content: src.slice(lastIndex) });
+  }
+
+  let result = segments.map(segment => {
+    // ========================================
+    // segment is a code block
+    // ========================================
+    if (segment.type === 'code') {
+      const txt = segment.content;
+      if (txt.startsWith('```')) {
+        const blockMatch = txt.match(/^`{3,4}(\w+)?\s*([\s\S]+?)\s*`{3,4}$/);
+        if (blockMatch) {
+          const lang = (blockMatch[1] || 'plaintext').toLowerCase();
+          const rawCode = blockMatch[2].trim();
+          const escapedRawCode = escapeHtml(rawCode).replace(/"/g, "&quot;");
+          return `<pre><code class="language-${lang}" data-original-code="${escapedRawCode}">${escapeHtml(rawCode)}</code></pre>`;
+        }
+        return txt;
+      } else {
+        const inlineMatch = txt.match(/^`([^`\n]+)`$/);
+        if (inlineMatch) {
+          const rawCode = inlineMatch[1];
+          const escapedRawCode = escapeHtml(rawCode).replace(/"/g, "&quot;");
+          return `<code data-original-code="${escapedRawCode}">${escapeHtml(rawCode)}</code>`;
+        }
+        return txt;
+      }
+    } else {
+      // ========================================
+      // segment may contain latex and markdown
+      // ========================================
+      let res = segment.content;
+      let latexBlocks = [];
+      let index = 0;
+
+      // 1. Store LaTeX blocks ($...$ and $$...$$) and replace them with placeholders
+      res = res.replace(latexRegex, (match, blockMath, inlineMath) => {
+        const placeholder = `\uE000LATEX\uE000${index}\uE001`;
+        const content = blockMath || inlineMath;
+        const rendered = blockMath 
+          ? `<div class="math_white_bg">${LaTeXToHtml(content, true)}</div>`
+          : `<span class="math_inline">${LaTeXToHtml(content, false)}</span>`;
+        latexBlocks.push({ placeholder, rendered });
+        index++;
+        return placeholder;
+      });
+
+      // 2. Store and replace \begin{} ... \end{} blocks with placeholders
+      res = res.replace(latexBlockRegex, (match, env, content) => {
+        const placeholder = `\uE000LATEX\uE000${index}\uE001`;
+        const rendered = `<div class="math_white_bg">${LaTeXToHtml(content, true)}</div>`;
+        latexBlocks.push({ placeholder, rendered });
+        index++;
+        return placeholder;
+      });
+
+      // 3. Store and replace unidentified latex blocks with placeholders
+      res = latexNotDelimited(res, latexBlocks, index);
+
+      res = res.replace(/\^([0-9]+)/g, (_, p1) => [...p1].map(d => '⁰¹²³⁴⁵⁶⁷⁸⁹'[d]).join(''));
+
+      // Markdown processing
+      res = MarkdownToHtml(res);
+      res = llmToHTML(res);
+
+      // Replace <br> only on non-latex text
+      res = res.replace(/\n/g, '<br>');
+
+      // Replace placeholders in reverse order (newest to oldest)
+      latexBlocks.reverse().forEach(({ placeholder, rendered }) => {
+        res = res.split(placeholder).join(rendered);
+      });
+
+     res = notManagedByKatex(res);
+
+      return res;
+    }
+  }).join('');
+
+  return result;
 }
 
-function MarkdownToHtml(content) {
+function latexNotDelimited(src, latexBlocks, index) {
+  const detectMath = ["+","-","*","/","=","^"];
+  const containsMathSymbol = (line) => detectMath.some(sym => line.includes(sym));
+  if (!src.includes("\\") && !containsMathSymbol(src)) return src;
+
+  const latexFunctions = [
+    // Operators
+    "int_", "sum", "prod", "coprod", "bigcup", "bigcap", "bigodot", 
+
+    // Relationships
+    "in", "subset", "supset", "subseteq", "supseteq", "approx", "equiv", "neq", 
+    "leq", "geq", "sim", "land", "lor", "neg", "forall", "exists", "nexists", 
+    "implies", "iff", "top", "bot", "vdash", "dashv",
+
+    // Mathematical functions
+    "frac", "sqrt", "lim", "limsup", "liminf", "sin", "cos", "tan", "sec", "csc", 
+    "cot", "arcsin", "arccos", "arctan", "log", "ln", "exp", "log_2", "log_10", 
+    "sin", "cos", "tan",
+
+    // Mathematical symbols
+    "infty", "pi", "alpha", "beta", "gamma", "delta", "epsilon", "zeta", "eta", "theta", 
+    "kappa", "lambda", "mu", "nu", "xi", "rho", "sigma", "tau", "phi", "chi", "psi", 
+    "omega", "mathbb", "aleph",
+
+    // Text functions
+    "mbox", "text", "mathrm", "mathit", "mathsf", "mathbb", "mathcal", "mathbf", "mathfrak", 
+    "mathscr", "label", "tag",
+
+    // Additional symbols
+    "diamondsuit", "clubsuit", "heartsuit", "spadesuit", "square", "bigstar", "bigcirc", "bullet", 
+
+    // Operators on matrices and vectors
+    "vec", "matrix", "pmatrix", "bmatrix", "vmatrix", "Vmatrix", "det", "Tr",
+
+    // Integration and derivation
+    "frac", "nabla", "partial"
+  ];
+
+  // Detect if line contains any LaTeX functions
+  return src.split("\n").map((line) => {
+    // Créer une nouvelle instance de l'expression régulière à chaque ligne
+    const latexRegex = new RegExp("\\\\(" + latexFunctions.join("|") + ")", "g");
+    if (latexRegex.test(line)) {
+      latexRegex.lastIndex = 0;
+      const placeholder = `\uE000LATEX\uE000${index}\uE001`;
+      let rendered = LaTeXToHtml(line);
+      latexBlocks.push({ placeholder, rendered });
+      index++;
+      return placeholder;
+    }
+    return line;
+  }).join("\n");
+}
+
+function notManagedByKatex(src) {
+  return src
+  .replace(/\\documentclass\s*\{[^}]*\}/g, '')
+  .replace(/(?:\\)?boxed\{(.*?)\}/g, (match, content) => `<span class="boxed">${content.replace(/\\\(|\\\)/g, '').replace(/\s+/g, ' ').trim()}</span>` )
+  .replace(/\\section\{([^}]+)\}/g, '<h2>$1</h2>')
+  .replace(/\\(begin|end)\{itemize\}\n?/g, (_, tag) => tag === "begin" ? "<ul>" : "</ul>")
+  .replace(/\\item\s*((?:.|\n)*?)(?=\\item|\\end{itemize}|$)/gs, "<li>$1</li>")
+}
+
+function replaceFromMap(txt, map) {
+  return Object.entries(map).reduce((acc, [key, value]) => acc.replace(new RegExp(key.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1"), 'g'), value), txt);
+}
+
+function applyReplacements(txt, replacements) {
+  return replacements.reduce((acc, [pattern, replacement]) => acc.replace(new RegExp(pattern, 'g'), replacement), txt);
+}
+
+// with help from https://github.com/showdownjs/showdown
+function processLists(src) {
+    var rx_space = /\t|\r|\uf8ff/g;
+    var rx_list = /\n( *)(?:[*\-+]|((\d+)|([a-z])|[A-Z])[.)]) +([^]*?)(?=(\n|$){2})/g;
+    var rx_listjoin = /<\/(ol|ul)>\n\n<\1>/g;
+
+    function list(src) {
+      return src.replace(rx_list, function(all, ind, ol, num, low, content) {
+        var entry = '<li>' + content.split(RegExp('\n ?' + ind + '(?:(?:\\d+|[a-zA-Z])[.)]|[*\\-+]) +', 'g')).map(list).join('</li><li>') + '</li>';
+
+        return '\n' + (ol
+          ? '<ol start="' + (num ? ol + '">'
+            : parseInt(ol,36) - 9 + '" style="list-style-type:' + (low ? 'low' : 'upp') + 'er-alpha">') + entry + '</ol>'
+          : '<ul>' + entry) + '</ul>';
+      });
+    }
+
+    src = src.replace(rx_space, '  ');
+
+    src = list(src);
+    return src
+    .replace(rx_listjoin, '')
+    .replace(/<\/ul>\n\n/g, '</ul>\n');
+};
+
+function processTables(src) {
+  return src.replace(/\n((?:\|[^\n]*\|\r?\n)+)(?:\n|$)/g, (m, t) => {
+    let rows = t.trim().split('\n');
+    if (rows.length < 2 || !/^\|[-:|\s]+\|$/.test(rows[1])) return m;
+
+    let aligns = rows[1].split('|').slice(1, -1).map(c =>
+      c.trim().startsWith(':') ? (c.endsWith(':') ? 'center' : 'left') : 'right'
+    );
+
+    let headers = rows[0].split('|').slice(1, -1).map((c, i) =>
+      `<th style="text-align:${aligns[i]}">${c.trim()}</th>`
+    ).join('');
+
+    let body = rows.slice(2).filter(l => l.trim()).map(l =>
+      '<tr>' + l.split('|').slice(1, -1).map((c, i) =>
+        `<td style="text-align:${aligns[i]}">${c.trim()}</td>`
+      ).join('') + '</tr>'
+    ).join('');
+
+    return `<table><thead><tr>${headers}</tr></thead><tbody>${body}</tbody></table>`;
+  });
+}
+
+function MarkdownToHtml(src) {
+  src = processLists(src);
+  src = processTables(src);
+
+  const additional_symbols_map = { "+-": "±", "-->": "→", "<--": "←" };
+  src = replaceFromMap(src, additional_symbols_map);
+
+  const markdownReplacements = [
+    // Escaping special characters
+    [/\\([*_#\\`\[\](){}+\-.])/g, '$1'],
+
+    // Inline code and code blocks
+    [/``(.*?)``/g, '<code>$1</code>'],
+    [/`(.*?)`/g, '<code>$1</code>'],
+    [/```(\w*)\n([\s\S]*?)```/g, (_, lang, code) => `<pre><code class="language-${lang || 'plaintext'}">${code.trim()}</code></pre>`],
+
+    // Headings
+    [/^#### (.*$)/gim, '<h4>$1</h4>'],
+    [/^### (.*$)/gim, '<h3>$1</h3>'],
+    [/^## (.*$)/gim, '<h2>$1</h2>'],
+    [/^# (.*$)/gim, '<h1>$1</h1>'],
+
+    // Checkboxes
+    [/- \[ \] (.*)/g, '<input type="checkbox" disabled> $1'],
+    [/- \[x\] (.*)/g, '<input type="checkbox" checked disabled> $1'],
+
+    // Text formatting: Bold, italic, strikethrough
+    [/(\*\*|__)(.*?)\1/g, '<strong>$2</strong>'],
+    [/(\*|_)(.*?)\1/g, '<em>$2</em>'],
+    [/~~(.*?)~~/g, '<s>$1</s>'],
+
+    // Images and links with optional title
+    [/!\[(.*?)\]\((.*?)(?:\s+"(.*?)")?\)/g, (_, alt, src, title) => `<img alt="${alt.replace(/"/g, '&quot;')}" src="${src}"${title ? ` title="${title}"` : ''}>`],
+    [/\[([^\]]+)\]\(([^\)]+)(?:\s+"(.*?)")?\)/g, (_, text, href, title) => `<a href="${href}" target="_blank"${title ? ` title="${title}"` : ''}>${text}</a>`],
+
+    // Horizontal rules
+    [/\n---+\n|\n\*\*\*+\n|\n___+\n/g, '<hr/>'],
+
+    // Blockquotes (incluant imbriqués)
+    [/^>\s*(.*$)/gim, '<blockquote>$1</blockquote>'],
+
+    // LaTeX-like formatting
+    [/\\\((.*?)\\\)/g, '$1'],
+    [/\\\[\s*\n?\s*([\s\S]*?)\s*\n?\s*\\\]/g, '<strong>$1</strong>'],
+  ];
+
+  return applyReplacements(src, markdownReplacements);
+}
+
+function llmToHTML(src) {
   const thinking_head = `<span class='thinking-tag' onclick="showReasoning(this);">⚛ reasoning</span><span class='thinking-content'>`;
-  return content
-  .replace(/^# (.*$)/gim, '<h1>$1</h1>')
-  .replace(/^## (.*$)/gim, '<h2>$1</h2>')
-  .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-  .replace(/^#### (.*$)/gim, '<h4>$1</h4>')
-  .replace(/(\*\*|__)([^*]+?)\1/g, '<strong>$2</strong>')
-  .replace(/(\*|_)([^*]+?)\1/g, '<em>$2</em>')
-  .replace(/\*([^*]+)\*|_([^_]+)_/g, '<em>$1$2</em>')
-  .replace(/~~([^~]+)~~/g, '<del>$1</del>')
-  .replace(/\[([^\]]+)\]\(([^\)]+)\)/g, '<a href="$2">$1</a>')
-  .replace(/`([^`\n]+)`/g, '<code>$1</code>')
-  .replace(/\*/g, '&times;')
-  .replace(/\n\n/g, '<br>').replace(/\n/g, '<br>')
-  .replace(/^\s*-\s(.*)$/gm, '<li>$1</li>')
-  .replace(/^<li>.*<\/li>$/gm, (match) => `<ul>${match}</ul>`)
-  .replace(/\\times/g, '&times;').replace(/\+-/g, '±').replace(/\^\circ/g, '°')
-  .replace(/-->/g, '→').replace(/<--/g, '←')
-  .replace(/```(\w+)?\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>')
-  .replace(/\\\[(.*?)\\\]/g, '$1').replace(/\\\((.*?)\\\)/g, '$1').replace(/\$\$(.*?)\$\$/g, '$1')
-  .replace(/<think><br>/g, thinking_head)
-  .replace(thinking_head+"<br>", thinking_head)
-  .replace(/<\/think>/g, `</span>`)
-  .replace(/<span class='thinking-content'>([\s\S]*?)<\/span>/g, `<span class='thinking-content hidden'>$1</span>`);
+  const llmToHTML = [
+    [/<think>/g, thinking_head],
+    [/<\/think>/g, '</span>'],
+    [/<span class='thinking-content'>([\s\S]*?)<\/span>/g, '<span class=\'thinking-content hidden\'>$1</span>'],
+    [/\n/g, '<br>']
+  ]
+  return applyReplacements(src, llmToHTML);
+}
+
+function LaTeXToHtml(src, displayMode) {
+  if (!displayMode && (src.includes("{align*}") || src.includes("\tag"))) displayMode = true;
+
+  const beforeLatex = [
+    [/\s*\\label\{([^}]+)\}\s*\n?/g, ''],
+    [/\\label\{([^}]+)\}/g, ''],
+    [/\\date\{[^}]*\}/g, ''],
+    [/\\author\{[^}]*\}/g, ''],
+    [/\\title\{[^}]*\}/g, ''],
+    [/\\centering/g, ''],
+    [/\\mbox\{([^}]+)\}/g, '\\text{$1}'],
+    [/\\documentclass\{[^}]*\}/g, ''],  // TODO \documentclass{article}
+  ]
+  src = applyReplacements(src, beforeLatex);
+
+  const errorColor = displayMode ? "#000000" : "#FFFFFF";
+
+  return katex.renderToString(src, /* element */ /*,*/ {
+    "displayMode": displayMode,
+    "leqno": false,
+    "fleqn": false,
+    "throwOnError": false,
+    "errorColor": errorColor,
+    "strict": "ignore",
+    "output": "htmlAndMathml",
+    "trust": false,
+    macros: {                   // Defines useful macros for the LLM
+      "\\f": "#1 f(#2)",        // Exemple : \f{g}{x} → g f(x)
+      "\\df": "d#1/d#2",        // Exemple : \df{x}{t} → dx/dt
+    }
+  })
+}
+
+function addCodeHeaders() {
+  document.querySelectorAll('pre code').forEach((codeBlock, index) => {
+    if (codeBlock.parentNode.hasAttribute('data-header-added')) return;
+
+    const preBlock = codeBlock.parentNode;
+    const language = (codeBlock.className.match(/language-(\w+)/) || [])[1] || 'plaintext';
+    const header = createElem('div');
+    header.className = 'code-header';
+
+    header.innerHTML = `
+      <span class="code-language">${language}</span>
+      <button class="copy-code-button" data-index="${index}" onclick="copyCodeToClipboard(this)">
+        <span class="icon">⧉</span> Copy
+      </button>
+    `;
+    preBlock.parentNode.insertBefore(header, preBlock);
+    preBlock.setAttribute('data-header-added', 'true');
+
+    if (window.Prism) Prism.highlightElement(codeBlock);
+  });
+}
+
+function copyCodeToClipboard(button) {
+  const index = button.getAttribute('data-index');
+  const codeBlock = document.querySelectorAll('pre code')[index];
+  let codeText = codeBlock.getAttribute('data-original-code') || codeBlock.textContent;
+  navigator.clipboard.writeText(codeText).then(() => {
+    button.textContent = 'Copied!';
+    setTimeout(() => button.textContent = '⧉ Copy', 1500);
+  }).catch(err => console.error('Copy error:', err));
 }
 
 function exportConversation() {
-  const conversationText = state.conversationHistory
+  const conversationText = Object.values(msgHistory)
     .filter(msg => msg.role !== 'system')
     .map(msg => `${msg.role === 'user' ? '👤 User' : '🦙 Assistant'}: ${msg.content}`)
     .join('\n\n');
 
-  const a = document.createElement('a');
+  const a = createElem('a');
   a.href = URL.createObjectURL(new Blob([conversationText], { type: 'text/plain' }));
   a.download = `ollama-chat-${new Date().toISOString().split('T')[0]}.txt`;
   a.click();
@@ -832,11 +1100,360 @@ function exportConversation() {
 const buttonsVisible = (show) => $('sample-queries').style.display = show ? '' : 'none';
 
 function clearChat() {
-  state.conversationHistory = state.conversationHistory.filter(msg => msg.role === 'system');
+  const sys_msg = msgHistory[0];
+  msgHistory = {};
+  msgHistory[0] = sys_msg;
   $('messages').innerHTML = '';
+  state.currentDiscussionId = null;
 }
 
-const scrollToBottom = () => $('chat-container').scrollTop = $('chat-container').scrollHeight;
+const scrollToBottom = () => autoScroll && (chatContainer.scrollTop = chatContainer.scrollHeight);
+
+/*================================*/
+// IndexedDB Database Management
+/*================================*/
+
+const DB_NAME = 'smOllamaDiscussions';
+const DB_VERSION = 1;
+const STORE_NAME = 'discussions';
+
+class DiscussionDB {
+  constructor() {
+    this.db = null;
+  }
+
+  async init() {
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.open(DB_NAME, DB_VERSION);
+
+      request.onupgradeneeded = (event) => {
+        const db = event.target.result;
+        db.createObjectStore(STORE_NAME, { 
+          keyPath: 'id', 
+          autoIncrement: true 
+        });
+      };
+
+      request.onsuccess = (event) => {
+        this.db = event.target.result;
+        resolve();
+      };
+
+      request.onerror = (event) => {
+        console.error("IndexedDB error:", event.target.error);
+        reject(event.target.error);
+      };
+    });
+  }
+
+  async loadDiscussions() {
+    if (!this.db) await this.init();
+
+    return new Promise((resolve, reject) => {
+      const transaction = this.db.transaction([STORE_NAME], 'readonly');
+      const store = transaction.objectStore(STORE_NAME);
+      const request = store.getAll();
+
+      request.onsuccess = (event) => resolve(event.target.result);
+      request.onerror = (event) => reject(event.target.error);
+    });
+  }
+
+  generateDiscussionTitle(messages) {
+    const userMessages = Object.values(messages)
+      .filter(msg => msg.role === 'user')
+      .map(msg => msg.content);
+
+    if (userMessages.length === 0) return "New Discussion";
+
+    // Use first user message as title, truncate if too long
+    const title = userMessages[0].length > 50 
+      ? userMessages[0].substring(0, 50) + "..." 
+      : userMessages[0];
+
+    return title;
+  }
+
+async saveDiscussion(messages) {
+  if (!this.db) await this.init();
+
+  return new Promise((resolve, reject) => {
+    const transaction = this.db.transaction([STORE_NAME], 'readwrite');
+    const store = transaction.objectStore(STORE_NAME);
+
+    const discussionToSave = {
+      messages: Object.values(messages)
+        .filter(msg => msg.role !== 'system')
+        .map(msg => ({
+          id: msg.id,
+          content: msg.content,
+          role: msg.role
+        })),
+      timestamp: new Date().toISOString(),
+      title: this.generateDiscussionTitle(messages)
+    };
+
+    const request = store.add(discussionToSave);
+
+    request.onsuccess = (event) => resolve(event.target.result);
+    request.onerror = (event) => reject(event.target.error);
+  });
+}
+
+async updateDiscussion(discussionId, messages, title = null) {
+  if (!this.db) await this.init();
+
+  return new Promise((resolve, reject) => {
+    const transaction = this.db.transaction([STORE_NAME], 'readwrite');
+    const store = transaction.objectStore(STORE_NAME);
+
+    const request = store.get(discussionId);
+
+    request.onsuccess = (event) => {
+      const discussion = event.target.result;
+      if (discussion) {
+        discussion.messages = Object.values(messages)
+          .filter(msg => msg.role !== 'system')
+          .map(msg => ({
+            id: msg.id,
+            content: msg.content,
+            role: msg.role
+          }));
+        
+        if (title) discussion.title = title;
+        
+        const updateRequest = store.put(discussion);
+        updateRequest.onsuccess = () => resolve();
+        updateRequest.onerror = () => reject();
+      }
+    };
+
+    request.onerror = (event) => reject(event.target.error);
+  });
+}
+
+async getDiscussion(id) {
+  return new Promise((resolve, reject) => {
+    const transaction = this.db.transaction([STORE_NAME], 'readonly');
+    const store = transaction.objectStore(STORE_NAME);
+    const request = store.get(id);
+      
+    request.onsuccess = (e) => resolve(e.target.result);
+    request.onerror = reject;
+  });
+}
+
+} // end class
+
+const discussionDB = new DiscussionDB();
+
+const originalDeleteMsg = deleteMsg;
+
+deleteMsg = async function(msgId) {
+  if (!msgId || !msgHistory[msgId]) return;
+
+  originalDeleteMsg.apply(this, arguments);
+
+  try {
+    if (state.currentDiscussionId) {
+      const discussions = await discussionDB.loadDiscussions();
+      const discussion = discussions.find(d => d.id === state.currentDiscussionId);
+
+      if (discussion) {
+        discussion.messages = discussion.messages.filter(msg => msg.id !== msgId);
+        await discussionDB.updateDiscussion(state.currentDiscussionId, discussion.messages);
+      }
+    }
+  } catch (error) {
+    console.error("Failed to delete message from DB:", error);
+  }
+};
+
+async function initDiscussions() {
+  try {
+    const savedDiscussions = await discussionDB.loadDiscussions();
+    const sidebarMenu = $('sidebar-content');
+    sidebarMenu.innerHTML = '';
+
+    // Parallel asynchronous loading
+    await Promise.all(savedDiscussions.reverse().map(async (d) => {
+      const fullDiscussion = await discussionDB.getDiscussion(d.id);
+      const li = createDiscussionListItem(fullDiscussion);
+      sidebarMenu.appendChild(li);
+    }));
+  } catch (error) {
+    console.error("Failed to init discussions:", error);
+  }
+}
+
+function createDiscussionListItem(discussion) {
+  const li = createElem('li');
+  li.innerHTML = `
+    <a href="#" data-discussion-id="${discussion.id}">
+      ${discussion.title}
+    </a>
+    <span class="menu-button">…</span>
+  `;// <small>${new Date(discussion.timestamp).toLocaleString()}</small>
+  
+  li.querySelector('.menu-button').addEventListener('click', (e) => {
+    e.stopPropagation();
+    showContextMenu(discussion, e);
+  });
+
+  li.addEventListener('click', () => loadDiscussion(discussion));
+  
+  return li;
+}
+
+async function loadDiscussion(discussion) {
+  try {
+    const freshDiscussion = await discussionDB.getDiscussion(discussion.id);
+    
+    clearChat();
+    state.currentDiscussionId = freshDiscussion.id;
+
+    freshDiscussion.messages.forEach(msg => {
+      createMessageWithID(msg.content, msg.role, msg.id);
+    });
+
+    //requestAnimationFrame(() => {
+    addCodeHeaders();
+    //Prism.highlightAll();
+    scrollToBottom(true);
+    //});
+  } catch (error) {
+    console.error("Error loading discussion:", error);
+    showError("Failed to load discussion");
+  }
+  
+  $('sidebar').classList.remove('open');
+}
+
+function saveCurrentDiscussion() {
+  // Save if this is a new discussion
+  if (!state.currentDiscussionId) {
+    discussionDB.saveDiscussion(msgHistory)
+      .then(discussionId => {
+        state.currentDiscussionId = discussionId;
+        initDiscussions();
+      })
+      .catch(console.error);
+  }
+}
+
+// Modify setupEvents to add save triggers
+function enhanceSaveEvents() {
+  const originalSendUserMessage = sendUserMessage;
+  sendUserMessage = function() {
+    const prevDiscussionId = state.currentDiscussionId;
+    originalSendUserMessage.apply(this, arguments);
+    if (!prevDiscussionId) {
+      saveCurrentDiscussion();
+    }
+  };
+}
+
+// Modify init to include discussion initialization
+const originalInit = init;
+init = function() {
+  originalInit.apply(this, arguments);
+  initDiscussions();
+  enhanceSaveEvents();
+};
+
+function showContextMenu(discussion, event) {
+  // Close any existing context menus
+  const existingMenus = document.querySelectorAll('.context-menu');
+  existingMenus.forEach(menu => menu.remove());
+
+  // Create context menu
+  const menu = createElem('ul');
+  menu.classList.add('context-menu');
+  menu.style.position = 'absolute';
+  menu.style.left = `${event.pageX}px`;
+  menu.style.top = `${event.pageY}px`;
+
+  // Create rename option
+  const renameOption = createElem('li');
+  renameOption.innerHTML = '✎ Rename'; // Ajoute l'icône
+  renameOption.addEventListener('click', () => renameDiscussion(discussion));
+
+  // Create delete option
+  const deleteOption = createElem('li');
+  deleteOption.innerHTML = '✖ Delete'; // Ajoute l'icône
+  deleteOption.addEventListener('click', () => deleteDiscussion(discussion));
+
+  // Append options to menu
+  menu.appendChild(renameOption);
+  menu.appendChild(deleteOption);
+  document.body.appendChild(menu);
+
+  // Close menu when clicking elsewhere
+  document.addEventListener('click', () => {
+    menu.remove();
+  }, { once: true });
+}
+
+async function renameDiscussion(discussion) {
+  const newName = prompt("Renommer la discussion", discussion.title);
+  if (newName && newName !== discussion.title) {
+    try {
+      // Update the discussion in the database
+      const discussions = await discussionDB.loadDiscussions();
+      const updatedDiscussion = discussions.find(d => d.id === discussion.id);
+      
+      if (updatedDiscussion) {
+        updatedDiscussion.title = newName;
+        await discussionDB.updateDiscussion(discussion.id, updatedDiscussion.messages, newName);
+        
+        // Update the UI
+        const discussionElements = document.querySelectorAll(`[data-discussion-id="${discussion.id}"]`);
+        discussionElements.forEach(element => {
+          element.textContent = newName;
+        });
+      }
+    } catch (error) {
+      console.error("Failed to rename discussion:", error);
+    }
+  }
+}
+
+async function deleteDiscussion(discussion) {
+  if (confirm(`Êtes-vous sûr de vouloir supprimer la discussion "${discussion.title}" ?`)) {
+    try {
+      // Delete the discussion from the database
+      if (!discussionDB.db) await discussionDB.init();
+      
+      const transaction = discussionDB.db.transaction([STORE_NAME], 'readwrite');
+      const store = transaction.objectStore(STORE_NAME);
+      const request = store.delete(discussion.id);
+      
+      request.onsuccess = () => {
+        // Remove the discussion from the sidebar
+        const discussionElements = document.querySelectorAll(`[data-discussion-id="${discussion.id}"]`);
+        discussionElements.forEach(element => {
+          const listItem = element.closest('li');
+          if (listItem) {
+            listItem.remove();
+          }
+        });
+        
+        // Clear chat if the deleted discussion was the current one
+        if (state.currentDiscussionId === discussion.id) {
+          clearChat();
+          state.currentDiscussionId = null;
+        }
+      };
+      
+      request.onerror = (event) => {
+        console.error("Failed to delete discussion:", event.target.error);
+      };
+    } catch (error) {
+      console.error("Failed to delete discussion:", error);
+    }
+  }
+}
+
 init();
   </script>
 </body>

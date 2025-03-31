@@ -10,15 +10,19 @@ smOllama is a lightweight chatbot interface designed specifically for Ollama lan
 
 ## Features
 
-- **Single File Solution**: Everything contained in one HTML file - no additional files needed
-- **Extremely Lightweight**: Only 24KB in size, making it the smallest Ollama chat interface available
-- **No Dependencies**: Built with vanilla HTML, CSS, and JavaScript - no frameworks or libraries required
-- **Markdown Support**: Basic Markdown formatting, including bold, italics, and links.
-- **LaTeX Support**: Basic rendering of mathematical formulas
+- **Instant Ollama integration**
+- **Lightweight**: Possibly the smallest Ollama chat interface available.
+- **No Dependencies**: Built with vanilla HTML, CSS, and JavaScript - no frameworks required
+- **Markdown Support**: Markdown formatting, including bold, italics, and links.
+- **LaTeX rendering** With Katex
+- **Code blocks rendering** With Prism
 - **Clean UI**: Simple, intuitive interface for seamless conversations
 - **Fast Loading**: Minimal footprint means instant startup
 - **Local Operation**: Works entirely with your local Ollama instance
 - **Cross-Platform**: Works on any device with a modern web browser
+- **Conversation history** with IndexedDB storage
+- **Mobile-responsive design**
+- **Real-time streaming**
 
 ## Getting Started
 
@@ -27,11 +31,16 @@ smOllama is a lightweight chatbot interface designed specifically for Ollama lan
 - A running Ollama instance with at least one model installed
 - A modern web browser
 
-### Installation
+### Installation  
 
-- On Windows, double-click the included `windows_start_server.bat` file to automatically start a server on port 80 and open smOllama
+#### Windows  
+- Double-click the included `windows_start_server.bat` file to automatically start a server on port 80 and open smOllama.  
 - Or manually start a server with: `npx live-server --port=80 public`
-- You can also use any other web server of your choice (due to CORS restrictions, opening the file directly in a browser won't work)
+
+#### Other systems (Linux, macOS, etc.)  
+- Simply run the command: `npx live-server --port=80 public`
+
+You can also use any other web server of your choice (due to CORS restrictions, opening the file directly in a browser won't work).
 
 ## Configuration
 
@@ -77,7 +86,8 @@ This project is available under a very permissive license. You are free to use, 
 
 - Please keep the original author's name in the comments.  
 
-No formal LICENSE file is required—just respect this minimal courtesy.  
+No formal LICENSE file is required—just respect this minimal courtesy.
+If needed, you can fork and apply your own license.
 If you find this tool useful, you might consider [buying me a coffee](https://buymeacoffee.com/gunnm) to support my work.
 
 ## Acknowledgments
