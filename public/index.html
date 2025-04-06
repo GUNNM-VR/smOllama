@@ -1269,23 +1269,6 @@ deleteMsg = async function(msgId) {
   }
 };
 
-async function initDiscussions() {
-  try {
-    const savedDiscussions = await discussionDB.loadDiscussions();
-    const sidebarMenu = $('sidebar-content');
-    sidebarMenu.innerHTML = '';
-
-    // Parallel asynchronous loading
-    await Promise.all(savedDiscussions.reverse().map(async (d) => {
-      const fullDiscussion = await discussionDB.getDiscussion(d.id);
-      const li = createDiscussionListItem(fullDiscussion);
-      sidebarMenu.appendChild(li);
-    }));
-  } catch (error) {
-    console.error("Failed to init discussions:", error);
-  }
-}
-
 function createDiscussionListItem(discussion) {
   const li = createElem('li');
   li.innerHTML = `
@@ -1303,6 +1286,71 @@ function createDiscussionListItem(discussion) {
   li.addEventListener('click', () => loadDiscussion(discussion));
   
   return li;
+}
+
+async function initDiscussions() {
+  try {
+    const savedDiscussions = await discussionDB.loadDiscussions();
+    const sidebarMenu = $('sidebar-content');
+    sidebarMenu.innerHTML = '';
+
+    const now = new Date();
+    const sections = {};
+
+  function getSectionLabel(isoDate) {
+    const now = new Date();
+    const d = new Date(isoDate);
+
+    // Convert both dates to local midnight
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const date = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+
+    const diffTime = today - date;
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+    const startOfWeek = new Date(today);
+    startOfWeek.setDate(today.getDate() - today.getDay());
+
+    const startOfLastWeek = new Date(startOfWeek);
+    startOfLastWeek.setDate(startOfWeek.getDate() - 7);
+
+    const sameMonth = d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const isLastMonth = d.getMonth() === lastMonth.getMonth() && d.getFullYear() === lastMonth.getFullYear();
+
+    if (diffDays === 0) return 'Today';
+    if (diffDays === 1) return 'Yesterday';
+    if (date >= startOfWeek) return 'This week';
+    if (date >= startOfLastWeek) return 'Last week';
+    if (sameMonth) return 'This month';
+    if (isLastMonth) return 'Last month';
+    return 'Older';
+  }
+
+    const discussions = await Promise.all(savedDiscussions.reverse().map(d => discussionDB.getDiscussion(d.id)));
+
+    discussions.forEach(discussion => {
+      const label = getSectionLabel(discussion.timestamp);
+      if (!sections[label]) sections[label] = [];
+      sections[label].push(discussion);
+    });
+
+    for (const label of ['Today', 'Yesterday', 'This week', 'Last week', 'This month', 'Last month', 'Older']) {
+      if (sections[label]) {
+        const header = document.createElement('h3');
+        header.textContent = label;
+        header.classList.add('section-label');
+        sidebarMenu.appendChild(header);
+
+        sections[label].forEach(discussion => {
+          const li = createDiscussionListItem(discussion);
+          sidebarMenu.appendChild(li);
+        });
+      }
+    }
+  } catch (error) {
+    console.error("Failed to init discussions:", error);
+  }
 }
 
 async function loadDiscussion(discussion) {

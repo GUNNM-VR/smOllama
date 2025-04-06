@@ -1,1 +1,1 @@
-npx live-server --port=80 public --cors
+npx live-server --port=80 public
